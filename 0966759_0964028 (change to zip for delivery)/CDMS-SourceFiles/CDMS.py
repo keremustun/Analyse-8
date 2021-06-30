@@ -2,6 +2,8 @@
 from client import *
 from users import *
 
+
+
 userTypes = {"1":"Super administrator", "2":"System administrator", "3":"Advisor"}
 
 def login():
