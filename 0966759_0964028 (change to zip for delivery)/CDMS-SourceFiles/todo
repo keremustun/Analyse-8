@@ -1,4 +1,12 @@
-To do:
--	Install SQLite 3
+make the tables
+-client
+-advisor
+-sys adm
+-sup adm
+-log
+
+encrypt sensitive database info
+
+make backup func
 
 
