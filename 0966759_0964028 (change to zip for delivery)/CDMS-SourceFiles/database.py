@@ -15,15 +15,22 @@ cursor.execute(createTableLog)
 
 #FOREIGN KEY(store_id) REFERENCES stores(store_id)) (reminder on how to do foreign keys)
 
-#add to stores
-cursor.execute("INSERT INTO clients (Full_Name, Address, Email_Address, Mobile_Phone)\
-                            VALUES  ('Bob','Afri','Afri@gmail.com','124142142' )")
-cursor.execute("INSERT INTO clients (Full_Name, Address, Email_Address, Mobile_Phone)\
-                            VALUES  ('Boasdb','Afasdri','Afriasdgmail.com','124142asd142' )")
+#--------------INSERT INTO CLIENT
+# cursor.execute("INSERT INTO clients (Full_Name, Address, Email_Address, Mobile_Phone)\
+#                             VALUES  ('Bob','Afri','Afri@gmail.com','124142142' )")
+# cursor.execute("INSERT INTO clients (Full_Name, Address, Email_Address, Mobile_Phone)\
+#                             VALUES  ('Boasdb','Afasdri','Afriasdgmail.com','124142asd142' )")
+
 # cursor.execute("UPDATE purchases SET total_cost = 3.67 WHERE purchase_id = 2")
 # cursor.execute("DELETE FROM purchases WHERE purchase_id = 3")
 
-cursor.execute("SELECT * FROM clients")
+sqlinjection="Bob' OR 'a' = 'a' --"
+
+#injection prevented
+cursor.execute("SELECT * FROM clients WHERE Full_Name=:username",{"username":bob})
+
+#injection unprevented
+#cursor.execute("SELECT * FROM clients WHERE Full_Name='{}'".format(bob))
 
 connection.commit()
 
