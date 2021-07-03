@@ -10,3 +10,4 @@ encrypt sensitive database info
 make backup func
 
 
+ALL SQL EXECUTIONS MUST BE SQL INJECTION SAFE, SO EVERY TIME YOU PASS DATA, USE A PREPARED STATEMENT.

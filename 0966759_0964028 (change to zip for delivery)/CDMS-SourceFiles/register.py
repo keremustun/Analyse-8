@@ -1,4 +1,6 @@
-from users import Client
+
+import database
+
 cities = ["Rotterdam", "Amsterdam", "Den Haag", "Eindhoven","Maastricht","Delft","Breda","Haarlem","Utrecht","Leiden"]
 
 def registerUser():
@@ -24,6 +26,10 @@ def registerUser():
             print("Wrong input, enter one of the 4 inputs below")
 
 
+
+
+
+
 def registerClient():
     name            = input("\n1. Enter the name of the new client: ")
 
@@ -34,13 +40,25 @@ def registerClient():
     for city in cities:
         print("- " + city )
     city            = input("\nCity: ")
+    address = streetName + ", " + zipCode + ", " + city
+
     email           = input("\n3. Email address: ")
     mobile          = input("\n4. Mobile: ")
 
+    database.addClientToDb(name,address,email,mobile)
     print("\n"+ "="*40)
 
 
+
     print("Client {} has been added to the database".format(name))
+
+
+
+
+
+
+
+
 
 def registerAdvisor():
     print("advisorreg")

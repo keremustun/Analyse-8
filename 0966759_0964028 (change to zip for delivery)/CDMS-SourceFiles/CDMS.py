@@ -1,6 +1,5 @@
 # The system is run by running this script
-from client import *
-from users import *
+from register import *
 
 
 
