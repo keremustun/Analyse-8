@@ -1,38 +1,29 @@
 import sqlite3
 
-connection = sqlite3.connect('testdb.db')
- 
+connection = sqlite3.connect('CDMS.db')
 cursor = connection.cursor()
 
 
-command1 = """CREATE TABLE IF NOT EXISTS
-stores(store_id INTEGER PRIMARY KEY, location TEXT)"""
-
-cursor.execute(command1)
+createTableClients = """CREATE TABLE IF NOT EXISTS
+clients(id INTEGER PRIMARY KEY AUTOINCREMENT, Full_Name TEXT, Address TEXT, Email_Address TEXT, Mobile_Phone TEXT)"""
+cursor.execute(createTableClients)
 
 #create purchase table
-command2 = """CREATE TABLE IF NOT EXISTS
-purchases(purchase_id INTEGER PRIMARY KEY, store_id INTEGER, total_cost FLOAT,
-FOREIGN KEY(store_id) REFERENCES stores(store_id))"""
+createTableLog = """CREATE TABLE IF NOT EXISTS
+log(id INTEGER PRIMARY KEY AUTOINCREMENT, Username TEXT, Date TEXT, Description_of_activity TEXT, Additional_information TEXT, Suspicious TEXT)"""
+cursor.execute(createTableLog)
 
-cursor.execute(command2)
+#FOREIGN KEY(store_id) REFERENCES stores(store_id)) (reminder on how to do foreign keys)
 
 #add to stores
-cursor.execute("INSERT INTO stores VALUES(21, 'Afri' )")
-cursor.execute("INSERT INTO stores VALUES(22, 'Bafri' )")
-cursor.execute("INSERT INTO stores VALUES(23, 'Cafri' )")
+cursor.execute("INSERT INTO clients (Full_Name, Address, Email_Address, Mobile_Phone)\
+                            VALUES  ('Bob','Afri','Afri@gmail.com','124142142' )")
+cursor.execute("INSERT INTO clients (Full_Name, Address, Email_Address, Mobile_Phone)\
+                            VALUES  ('Boasdb','Afasdri','Afriasdgmail.com','124142asd142' )")
+# cursor.execute("UPDATE purchases SET total_cost = 3.67 WHERE purchase_id = 2")
+# cursor.execute("DELETE FROM purchases WHERE purchase_id = 3")
 
-#add to purchases
-cursor.execute("INSERT INTO purchases VALUES(2, 21, 15 )")
-cursor.execute("INSERT INTO purchases VALUES(3, 23, 1.21 )")
-
-
-
-
-cursor.execute("UPDATE purchases SET total_cost = 3.67 WHERE purchase_id = 2")
-cursor.execute("DELETE FROM purchases WHERE purchase_id = 3")
-
-cursor.execute("SELECT * FROM purchases")
+cursor.execute("SELECT * FROM clients")
 
 connection.commit()
 
