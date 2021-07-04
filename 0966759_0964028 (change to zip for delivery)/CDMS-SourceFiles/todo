@@ -11,3 +11,5 @@ make backup func
 
 
 ALL SQL EXECUTIONS MUST BE SQL INJECTION SAFE, SO EVERY TIME YOU PASS DATA, USE A PREPARED STATEMENT.
+
+what needs to be done when username or password is entered wrong too many times
