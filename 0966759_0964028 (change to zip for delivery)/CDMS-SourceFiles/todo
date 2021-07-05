@@ -5,3 +5,5 @@ make backup func
 Check what needs to be done when username or password is entered wrong too many times
 
 ALWAYS TODO: ALL SQL EXECUTIONS MUST BE SQL INJECTION SAFE, SO EVERY TIME YOU PASS DATA, USE A PREPARED STATEMENT
+
+change loginPassed 

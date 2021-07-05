@@ -5,9 +5,11 @@ import database
 userTypes = {"1":"Advisor", "2":"System administrator", "3":"Super administrator"}
 
 def getLoginType():
+    print("\n" *40)
     print("Welcome to the CDMS!\n")
     userType = 0
     while userType not in ("1","2","3"):
+        
         print("Which user type are you?")
         print("Enter 1 to login as an advisor")
         print("Enter 2 to login as a system administrator")
@@ -16,8 +18,9 @@ def getLoginType():
 
         userType = input("\nUser type: ")
         if userType in ("1","2","3"):
+            print("\n" *40)
             print("\n" + "="*40)
-            print("Logged in as: {}".format(userTypes[userType]))
+            print("Login type: {}".format(userTypes[userType]))
             return userType
         elif userType == "q":
             print("\nBye bye!")
@@ -30,17 +33,20 @@ def login(logintypeArg):
     strikes = 0
     loginPassed = False
     while not loginPassed:
-        print("Enter your username and password")
-        username = input("Username: ")
-        password = input("Password: ")
+        if loginType == '3':
+            loginPassed = True
+        else:
+            print("Enter your username and password")
+            username = input("Username: ")
+            password = input("Password: ")
+            loginPassed = database.AuthenticateLogin(username, password, logintypeArg)
 
-        loginPassed = database.AuthenticateLogin(username, password, logintypeArg)
         if loginPassed == "superadmin":
             return "superadmin"
         elif loginPassed == "systemadmin":
             user = database.getUser(username,password,logintypeArg)
             return user
-        elif loginpassed == "advisor":
+        elif loginPassed == "advisor":
             user = database.getUser(username,password,logintypeArg)
             return user
         else:
@@ -52,29 +58,43 @@ def login(logintypeArg):
 
 
 # Login passed, creating user session...
-def initializeUser(user):
-    print(user)
-    # if loginType == "1":
-    #     return Advisor(user)
-
-def showMenu(usertype):
+def initializeUser(user,logintypeArg):
     print("\n" * 30)
+    if logintypeArg == '1':
+        print("Advisor login")
+        userSession = Advisor(user)
+        return userSession
+
+    # elif logintypeArg == '2':
+    #     print("System admin login")
+    #     userSession = Sys(user)
+    #     return userSession
+    # else:
+    #     print("System admin login")
+
+def showMenu():
+    print("\n" * 3)
     print("Menu | Choose an action")
     print("="*30)
+    currentUser.showMenu()
 
-    print("Enter 1 to register a user ")
-    action = input("Action: ")
 
-    if action == "1":
-        registerUser()
 
+#××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
+#×××××××××××××××××××××××××××××××××××××××××××××××× PROGRAM START ×××××××××××××××××××××××××××××××××××××××××××××××××
+#××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
 
 #determining login type
 loginType = getLoginType()
 
 #input Username and password
 currentUser = login(loginType)
-currentUser = initializeUser(currentUser)
-showMenu(loginType)
+currentUser = initializeUser(currentUser,loginType)
+
+loggedIn = True
+print("\n" * 30)
+
+while loggedIn:
+    showMenu()
 
 
