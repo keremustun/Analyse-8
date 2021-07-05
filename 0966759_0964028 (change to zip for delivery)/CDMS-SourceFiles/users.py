@@ -32,7 +32,6 @@ class Advisor():
         if action == "4":
             searchClient()
         if action == "x":
-            print("Logging out...")
             return False
 
 
