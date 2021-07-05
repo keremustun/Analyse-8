@@ -171,11 +171,13 @@ def getUser(username, password, logintypeArg):
     results = cursor.fetchall()
     return results
 
+def drop_table():
+    name = input("delete content of table. tablename: ")
+    cursor.execute("DELETE FROM {}".format(name))
+    connection.commit()
+    
 
-
-connection.commit()
-
-
+drop_table()
 
 
 #FOREIGN KEY(store_id) REFERENCES stores(store_id)) (reminder on how to do foreign keys)
