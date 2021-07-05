@@ -26,6 +26,7 @@ cursor.execute(createTableLog)
 
 cities = ["Rotterdam", "Amsterdam", "Den Haag", "Eindhoven","Maastricht","Delft","Breda","Haarlem","Utrecht","Leiden"]
 
+
 def registerUser():
     print("\n" * 30)
     registerType = ""
