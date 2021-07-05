@@ -19,8 +19,9 @@ class Advisor():
         print("Enter 2 to add a new client ")
         print("Enter 3 to modify info of a client ")
         print("Enter 4 to search and retrieve info of a client")
+        print("Enter x to log out")
         
-        action = input("Action: ")
+        action = input("\nAction: ")
 
         if action == "1":
             self.changePassword()
@@ -30,6 +31,9 @@ class Advisor():
             modClient()
         if action == "4":
             searchClient()
+        if action == "x":
+            print("Logging out...")
+            return False
 
 
     def changePassword(self):

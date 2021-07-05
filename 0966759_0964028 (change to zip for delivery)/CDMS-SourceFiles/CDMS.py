@@ -4,8 +4,11 @@ import database
 
 userTypes = {"1":"Advisor", "2":"System administrator", "3":"Super administrator"}
 
-def getLoginType():
+def getLoginType(loggedout):
     print("\n" *40)
+    if loggedout:
+        print("Logged out...")
+    print("="*50)   
     print("Welcome to the CDMS!\n")
     userType = 0
     while userType not in ("1","2","3"):
@@ -75,7 +78,7 @@ def initializeUser(user,logintypeArg):
 def showMenu():
     print("\n" * 3)
     print("Menu | Choose an action")
-    print("="*30)
+    print("="*50)
     currentUser.showMenu()
 
 
@@ -84,17 +87,22 @@ def showMenu():
 #×××××××××××××××××××××××××××××××××××××××××××××××× PROGRAM START ×××××××××××××××××××××××××××××××××××××××××××××××××
 #××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
 
+running = True
 #determining login type
-loginType = getLoginType()
+loggedout = False
+while running:
+    loginType = getLoginType(loggedout)
 
-#input Username and password
-currentUser = login(loginType)
-currentUser = initializeUser(currentUser,loginType)
+    #input Username and password
+    currentUser = login(loginType)
+    currentUser = initializeUser(currentUser,loginType)
 
-loggedIn = True
-print("\n" * 30)
+    loggedIn = True
+    print("\n" * 30)
 
-while loggedIn:
-    showMenu()
+    while loggedIn:
+        loggedIn = showMenu()
+        loggedout = True
+        
 
 
