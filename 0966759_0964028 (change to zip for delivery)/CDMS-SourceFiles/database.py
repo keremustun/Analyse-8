@@ -96,8 +96,8 @@ def registerAdvisor():
     psswd            = input("\n2. Enter the password for the new advisor: ")
     fname            = input("\n3. Enter the first name of the new advisor: ")
     lname            = input("\n4. Enter the last name of the new advisor: ")
-    import datetime
-    date = str(datetime.today())
+    from datetime import date
+    date = str(date.today())
     addAdvisorToDb(uname,psswd,fname,lname,date)
     print("Advisor " + uname + " has been registered on " + date)
 
