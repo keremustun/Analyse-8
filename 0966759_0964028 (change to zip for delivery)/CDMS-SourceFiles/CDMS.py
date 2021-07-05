@@ -26,7 +26,7 @@ def getLoginType():
             print("\nWrong input")
 
 # Enter username and password
-def login(logintype):
+def login(logintypeArg):
     strikes = 0
     loginPassed = False
     while not loginPassed:
@@ -34,14 +34,14 @@ def login(logintype):
         username = input("Username: ")
         password = input("Password: ")
 
-        loginPassed = database.AuthenticateLogin(username, password, logintype)
+        loginPassed = database.AuthenticateLogin(username, password, logintypeArg)
         if loginPassed == "superadmin":
             return "superadmin"
         elif loginPassed == "systemadmin":
-            user = database.getUser(username,password,log)
+            user = database.getUser(username,password,logintypeArg)
             return user
         elif loginpassed == "advisor":
-            user = database.getUser(username,password,logintype)
+            user = database.getUser(username,password,logintypeArg)
             return user
         else:
             strikes += 1
@@ -56,6 +56,15 @@ def initializeUser(user):
     print(user)
     # if loginType == "1":
     #     return Advisor(user)
+
+def showMenu(usertype):
+    print("\n" * 30)
+    print("Menu | Choose an action")
+    print("="*30)
+
+    print("Choose 1, ")
+    action = input("Action: ")
+
 
 #determining login type
 loginType = getLoginType()
