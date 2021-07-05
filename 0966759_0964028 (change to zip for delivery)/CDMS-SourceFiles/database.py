@@ -84,7 +84,8 @@ def registerAdvisor():
 
     usernameOK = False
     while not usernameOK:
-        uname = input("\n1. Enter the username of the new advisor OR Enter 'q' to quit: ")
+        print("\nRegistering an advisor. Enter 'q' to quit OR")
+        uname = input("\n1. Enter the username of the new advisor: ")
         if uname == 'q':
             return
         if userNameTaken(uname):
@@ -124,19 +125,26 @@ def AuthenticateLogin(username, password, logintype):
 
 
 def userNameTaken(username):
-    if ("SELECT * FROM advisors WHERE Username=:un",{"un":username}) != []:
+    cursor.execute("SELECT * FROM advisors WHERE Username=:username",{"username":username})
+    advisorUserNameInDb = cursor.fetchall()
+    if advisorUserNameInDb != []:
         return True
-    if ("SELECT * FROM sysadmins WHERE Username=:un",{"un":username}) != []:
+
+    cursor.execute("SELECT * FROM sysadmins WHERE Username=:username",{"username":username})
+    sysadminUserNameInDb = cursor.fetchall()
+    if sysadminUserNameInDb != []:
         return True
+
+    print("username available")
     return False
 #--------------------------------------------------------------------------------------------------------------------------------
 # Advisor functions
 
-def authenticatePassword():
-    x
+# def authenticatePassword():
+#     x
 
-def updatePassword():
-    x
+# def updatePassword():
+#     x
 
 def showAllClients():
     cursor.execute("SELECT * FROM clients")
@@ -156,10 +164,10 @@ def getClientInfo(idarg):
         
 
 def getUser(username, password, logintypeArg):
-    if logintypeArg == :
-    
+    if logintypeArg == '1':
+        cursor.execute("SELECT * FROM advisors WHERE Username=:username AND Password=:password",{"username":username, "password":password})
     else:
-        cursor.execute("SELECT * FROM employees WHERE Username=:username AND Password=:password",{"username":username, "password":password})
+        cursor.execute("SELECT * FROM sysadmins WHERE Username=:username AND Password=:password",{"username":username, "password":password})
     results = cursor.fetchall()
     return results
 

@@ -62,8 +62,11 @@ def showMenu(usertype):
     print("Menu | Choose an action")
     print("="*30)
 
-    print("Choose 1, ")
+    print("Enter 1 to register a user ")
     action = input("Action: ")
+
+    if action == "1":
+        registerUser()
 
 
 #determining login type
@@ -72,6 +75,6 @@ loginType = getLoginType()
 #input Username and password
 currentUser = login(loginType)
 currentUser = initializeUser(currentUser)
+showMenu(loginType)
 
-registerUser()
 
