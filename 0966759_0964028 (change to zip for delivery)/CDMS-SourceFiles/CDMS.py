@@ -68,17 +68,17 @@ def initializeUser(user,logintypeArg):
         userSession = Advisor(user)
         return userSession
 
-    # elif logintypeArg == '2':
-    #     print("System admin login")
-    #     userSession = Sys(user)
-    #     return userSession
-    # else:
-    #     print("System admin login")
+    elif logintypeArg == '2':
+        print("System admin login")
+        userSession = SystemAdmin(user)
+        return userSession
+        
+    else:
+        print("Super admin login")
+        userSession = SuperAdmin(user)
+        return userSession
 
 def showMenu():
-    print("\n" * 3)
-    print("Menu | Choose an action")
-    print("="*50)
     currentUser.showMenu()
 
 

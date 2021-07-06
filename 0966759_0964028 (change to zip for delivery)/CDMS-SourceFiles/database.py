@@ -26,6 +26,7 @@ cursor.execute(createTableLog)
 
 cities = ["Rotterdam", "Amsterdam", "Den Haag", "Eindhoven","Maastricht","Delft","Breda","Haarlem","Utrecht","Leiden"]
 
+
 def registerUser():
     print("\n" * 30)
     registerType = ""
@@ -187,15 +188,51 @@ def authenticatePassword(pw, un, logintypeArg):
             return True
         return False
 
-def updatePassword(newpw, uid, logintypeArg):
+
+
+
+
+
+
+
+def changePassword(un,logintypeArg):
+        userInput = ''
+        strikes = 0
+        while userInput == '': 
+            userInput = input("Enter your current password or enter 'x' to exit:\n")
+            if userInput == 'x':
+                return
+
+            correctPassword = authenticatePassword(userInput, un, logintypeArg)
+            if correctPassword:
+                newPass        = input("Enter the new password: ")
+                confirmNewPass = input("Enter the new password again for confirmation: ")
+                if newPass == confirmNewPass:
+                    updatePassword(newPass, un, logintypeArg)
+                    print("Password has been succesfully updated!")
+                    return
+                else:
+                    print("Passwords dont match")
+                    userInput = ''
+            else:
+                strikes += 1
+                if strikes == 3:
+                    print("Incorrect password too many times. Logging out...")
+                    quit()
+                else:
+                    print("Incorrect password. Please try again.")
+                    userInput = ''
+
+
+def updatePassword(newpw, un, logintypeArg):
     if logintypeArg == "1":
-        updatePassSQL = "UPDATE advisors SET Password = ? WHERE id = ?"
-        args = (newpw, uid)
+        updatePassSQL = "UPDATE advisors SET Password = ? WHERE Username = ?"
+        args = (newpw, un)
         cursor.execute(updatePassSQL,args)
         connection.commit()
     else:
-        updatePassSQL = "UPDATE sysadmins SET Password = ? WHERE id = ?"
-        args = (newpw, uid)
+        updatePassSQL = "UPDATE sysadmins SET Password = ? WHERE Username = ?"
+        args = (newpw, un)
         cursor.execute(updatePassSQL,args)
         connection.commit()
     
