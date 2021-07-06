@@ -67,6 +67,8 @@ def showMenu(usertype):
 
     if action == "1":
         registerUser()
+    if action =="2":
+        registerClient()
 
 
 #determining login type
@@ -77,4 +79,5 @@ currentUser = login(loginType)
 currentUser = initializeUser(currentUser)
 showMenu(loginType)
 
+# def validateInput(input):
 

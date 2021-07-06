@@ -1,4 +1,5 @@
 import sqlite3
+import re
 
 connection = sqlite3.connect('CDMS.db')
 cursor = connection.cursor()
@@ -60,14 +61,19 @@ def registerClient():
     name            = input("\n1. Enter the name of the new client: ")
     print(                  "\n2. Entering the address...")
     streetName      = input("2.1. Street name: ")
-    zipCode         = input("2.2. Zipcode: ")
-    print(                  "2.3. City: (Choose one from the list below) ")
+    houseNumber     = input("2.2. Houser Number: ")
+    zipCode         = input("2.3. Zipcode: ")
+    print(                  "2.4. City: (Choose one from the list below) ")
     for city in cities:
         print("- " + city )
     city            = input("\nCity: ")
-    address = streetName + ", " + zipCode + ", " + city
+    while city not in cities:
+        "Please choose one from the list below:"
+        for city in cities:
+            print("- " + city )
+    address = f"{streetName} {houseNumber}, {zipCode}, {city}"
     email           = input("\n3. Email address: ")
-    mobile          = input("\n4. Mobile: ")
+    mobile          = input("\n4. Mobile: +31-6-")
 
     addClientToDb(name,address,email,mobile)
     print("\n"+ "="*40)
@@ -200,3 +206,47 @@ connection.commit()
 
 #injection unprevented
 #cursor.execute("SELECT * FROM clients WHERE Full_Name='{}'".format(bob))
+
+
+def isValidName(name):
+    minlen = 1
+    maxlen = 25
+
+    #Checks the length of the name
+    if len(name)< minlen:
+        return "Name must be at least 1 character"
+    if len(name) > maxlen:
+        return "Name is too long"
+
+    #Checks if all characters in the string are alphabetic
+    if re.match('^[a-zA-Z]+\ +[a-zA-Z]+$', name):
+        return "Valid"
+    return "Invalid"
+
+
+def isValidStreetname (streetname):
+    if re.match('^[a-zA-Z]+$', streetname.replace(" ","")): 
+        return "Valid"
+    return "Invalid"
+
+
+def isValidHouseNumber (housenumber):
+    if re.match('^[a-zA-Z0-9]+$', housenumber):
+        return "Valid"
+    return "Invalid"
+
+
+def isValidZipcode (zipcode):
+    if re.match("^[0-9]{4}([a-zA-Z]{2})$", zipcode):
+        return "Valid"
+    return "Invalid"
+
+def isValidEmail (email):
+    if re.match('^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$', email):  
+        return "Valid"
+    return "Invalid"
+
+def isValidPhonenumber(mobile):
+    if re.match('^[0-9]{8}$', mobile):  
+        return "Valid"
+    return "Invalid"
