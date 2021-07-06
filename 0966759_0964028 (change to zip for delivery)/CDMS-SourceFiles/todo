@@ -17,10 +17,10 @@ Menu:
 - System Admin
     + everything an advisor can do
     + delete client
-    - Check list of users and their role
-    - add Advisor
-    - mod Advisor
-    - del Advisor
+    + Check list of users and their role
+    + add Advisor
+    + mod Advisor
+    + del Advisor
     - reset Advisor password (temp pass)
     - backup System
     - see log

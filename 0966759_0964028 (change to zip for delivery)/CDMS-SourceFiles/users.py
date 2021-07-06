@@ -29,13 +29,12 @@ class Advisor():
     def menuActions(action,userInfo,logintypeArg):
         if action == "1":
             changePassword(userInfo[0][1],logintypeArg)
-            print("changepassd")
         if action == "2":
             registerClient()    
         if action == "3":
-            modClient()
+            modRecord("client")
         if action == "4":
-            searchClient()
+            searchRecord('client')
         if action == "x":
             return False
 
@@ -64,15 +63,15 @@ class SystemAdmin(Advisor):
     def menuActions(action,userInfo,logintypeArg):
         Advisor.menuActions(action, userInfo, logintypeArg)
         if action == "5":
-            deleteClient()
+            deleteRecord('client')
         if action == "6":
             listAllUsers()
         if action == "7":
-            print("x")
+            registerAdvisor()
         if action == "8":
-            print("x")
+            modRecord("advisor")
         if action == "9":
-            print("x")
+            deleteRecord('advisor')
         if action == "10":
             print("x") 
         if action == "11":
@@ -123,19 +122,19 @@ class SuperAdmin(SystemAdmin):
         if action == "1":
             registerClient()    
         if action == "2":
-            modClient()
+            modRecord('client')
         if action == "3":
-            searchClient()
+            searchRecord('client')
         if action == "4":
-            print("x")
+            deleteRecord('client')
         if action == "5":
-            print("x")
+            listAllUsers()
         if action == "6":
-            print("x")  
+            registerAdvisor()
         if action == "7":
-            print("x")
+            modRecord('advisor')
         if action == "8":
-            print("x")
+            deleteRecord('advisor')
         if action == "9":
             print("x")
         if action == "10":
