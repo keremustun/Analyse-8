@@ -29,6 +29,7 @@ class Advisor():
     def menuActions(action,userInfo,logintypeArg):
         if action == "1":
             changePassword(userInfo[0][1],logintypeArg)
+            print("changepassd")
         if action == "2":
             registerClient()    
         if action == "3":
@@ -63,7 +64,7 @@ class SystemAdmin(Advisor):
     def menuActions(action,userInfo,logintypeArg):
         Advisor.menuActions(action, userInfo, logintypeArg)
         if action == "5":
-            print("x")
+            deleteClient()
         if action == "6":
             print("x")  
         if action == "7":
@@ -79,7 +80,14 @@ class SystemAdmin(Advisor):
         if action == "12":
             print("x")
 
+    
+        
 
+
+    def listUsers():
+        print("users")
+
+    
 
 #System admin class : Advisor
 

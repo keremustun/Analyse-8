@@ -181,11 +181,12 @@ def authenticatePassword(pw, un, logintypeArg):
                 return True
         return False
     
-    if logintypeArg == '2':
+    elif logintypeArg == '2':
         cursor.execute("SELECT Password FROM sysadmins WHERE Username=:un AND Password=:pw",{"un":un,"pw":pw})
-        dbPassword = cursor.fetchall()[0][0]
-        if dbPassword == pw:
-            return True
+        dbPassword = cursor.fetchall()
+        if dbPassword != []:
+            if dbPassword[0][0] == pw:
+                return True
         return False
 
 
@@ -196,46 +197,45 @@ def authenticatePassword(pw, un, logintypeArg):
 
 
 def changePassword(un,logintypeArg):
-        userInput = ''
-        strikes = 0
-        while userInput == '': 
-            userInput = input("Enter your current password or enter 'x' to exit:\n")
-            if userInput == 'x':
+    def updatePassword(newpw, un, logintypeArg):
+        if logintypeArg == "1":
+            updatePassSQL = "UPDATE advisors SET Password = ? WHERE Username = ?"
+            args = (newpw, un)
+            cursor.execute(updatePassSQL,args)
+            connection.commit()
+        else:
+            updatePassSQL = "UPDATE sysadmins SET Password = ? WHERE Username = ?"
+            args = (newpw, un)
+            cursor.execute(updatePassSQL,args)
+            connection.commit()
+
+    userInput = ''
+    strikes = 0
+    while userInput == '': 
+        userInput = input("Enter your current password or enter 'x' to exit:\n")
+        if userInput == 'x':
+            return
+
+        correctPassword = authenticatePassword(userInput, un, logintypeArg)
+        if correctPassword:
+            newPass        = input("Enter the new password: ")
+            confirmNewPass = input("Enter the new password again for confirmation: ")
+            if newPass == confirmNewPass:
+                updatePassword(newPass, un, logintypeArg)
+                print("Password has been succesfully updated!")
                 return
-
-            correctPassword = authenticatePassword(userInput, un, logintypeArg)
-            if correctPassword:
-                newPass        = input("Enter the new password: ")
-                confirmNewPass = input("Enter the new password again for confirmation: ")
-                if newPass == confirmNewPass:
-                    updatePassword(newPass, un, logintypeArg)
-                    print("Password has been succesfully updated!")
-                    return
-                else:
-                    print("Passwords dont match")
-                    userInput = ''
             else:
-                strikes += 1
-                if strikes == 3:
-                    print("Incorrect password too many times. Logging out...")
-                    quit()
-                else:
-                    print("Incorrect password. Please try again.")
-                    userInput = ''
+                print("Passwords dont match")
+                userInput = ''
+        else:
+            strikes += 1
+            if strikes == 3:
+                print("Incorrect password too many times. Logging out...")
+                quit()
+            else:
+                print("Incorrect password. Please try again.")
+                userInput = ''
 
-
-def updatePassword(newpw, un, logintypeArg):
-    if logintypeArg == "1":
-        updatePassSQL = "UPDATE advisors SET Password = ? WHERE Username = ?"
-        args = (newpw, un)
-        cursor.execute(updatePassSQL,args)
-        connection.commit()
-    else:
-        updatePassSQL = "UPDATE sysadmins SET Password = ? WHERE Username = ?"
-        args = (newpw, un)
-        cursor.execute(updatePassSQL,args)
-        connection.commit()
-    
 
 
 
@@ -267,9 +267,6 @@ def getClientInfo(idarg):
     results = cursor.fetchall()
     return results
 
-
-
-        
 
 def getUser(username, password, logintypeArg):
     if logintypeArg == '1':
@@ -313,7 +310,6 @@ Enter 'x' to exit\n\n")
             newInfo = input("Enter the new info:")
             updateInfo(columnName,newInfo,clientId)
 
-
 def updateInfo(columnName,newInfo,uid):
     sql = "UPDATE clients SET {} = ? WHERE id = ?".format(columnName)
     args = (newInfo,uid)
@@ -348,6 +344,54 @@ Enter 'x' to exit\n\n")
             getColumns("clients")
             print("Client info: " + str(clientInfo[0]))
             print("="*80)
+
+
+def deleteClient():
+    def deleteClient2(clientId):
+        clientInfo = getClientInfo(clientId)
+        if clientInfo == []:
+            print("\n" * 40)
+            print(f"Client with id '{clientId}' doesn't exist\n")
+        else:
+            cursor.execute("DELETE FROM clients WHERE id=:id",{"id":clientId})
+            connection.commit()
+            print("\n" * 40)
+            print(f"Client '{clientInfo[0][1]}' with id:{clientInfo[0][0]} has been deleted\n")
+            return
+
+    print("\n" * 30 + "\nSo you want to delete a client huh?\nThen you've come to the right place\n")
+    #DONT CHANGE THE INDENTATION HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    clientId = ''
+    while clientId != 'x':
+        clientId = input("Enter the id of the client who you want to delete\n\
+Or\n\
+Enter 'list' to show the list of all clients and their id's\n\
+Or\n\
+Enter 'x' to exit\n\n\
+Choice: ")
+
+        if clientId == 'x':
+            return
+
+        elif clientId == 'list':
+            allClients = showAllClients()
+            getColumns("clients")
+            for client in allClients:
+                print(client )
+            print("="*80)
+            clientId = input("Enter the id of the client to delete OR enter 'x' to exit: ")
+            if clientId != 'list':
+                deleteClient2(clientId)
+                
+        else:
+            deleteClient2(clientId)
+            
+
+
+
+
+
+
 
 
 def drop_table():
