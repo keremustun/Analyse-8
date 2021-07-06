@@ -25,7 +25,7 @@ cursor.execute(createTableLog)
 
 #=========================================================================================================   Register  =====================================
 
-cities = ["Rotterdam", "Amsterdam", "Den Haag", "Eindhoven","Maastricht","Delft","Breda","Haarlem","Utrecht","Leiden"]
+
 
 def registerUser():
     registerType = ""
@@ -58,22 +58,22 @@ def registerClient():
         cursor.execute(sql,sqlargs)
         connection.commit()
 
-    name            = input("\n1. Enter the name of the new client: ")
-    print(                  "\n2. Entering the address...")
-    streetName      = input("2.1. Street name: ")
-    houseNumber     = input("2.2. Houser Number: ")
-    zipCode         = input("2.3. Zipcode: ")
-    print(                  "2.4. City: (Choose one from the list below) ")
+    cities = ["Rotterdam", "Amsterdam", "Den Haag", "Eindhoven","Maastricht","Delft","Breda","Haarlem","Utrecht","Leiden"]
+
+    name            = ValidateName(input(      "\n1. Enter the full name of the new client: "))
+    print(                                     "\n2. Entering the address...")
+    streetName      = ValidateStreetName(input("2.1. Street name: "))
+    houseNumber     = ValidateHouseNumber(input(    "2.2. Houser Number: "))
+    zipCode         = ValidateZipCode(input(   "2.3. Zipcode: "))
+    print(                                     "2.4. City: (Choose one from the list below) ")
+
     for city in cities:
         print("- " + city )
-    city            = input("\nCity: ")
-    while city not in cities:
-        "Please choose one from the list below:"
-        for city in cities:
-            print("- " + city )
+    city = ValidateCity (input("\nCity: "), cities)
+    
     address = f"{streetName} {houseNumber}, {zipCode}, {city}"
-    email           = input("\n3. Email address: ")
-    mobile          = input("\n4. Mobile: +31-6-")
+    email  = ValidateEmail (input("\n3. Email address: "))
+    mobile =ValidatePhoneNumber (input("\n4. Mobile: +31-6-"))
 
     addClientToDb(name,address,email,mobile)
     print("\n"+ "="*40)
@@ -165,10 +165,6 @@ def getClientInfo(idarg):
     results = cursor.fetchall()
     return results
 
-
-
-        
-
 def getUser(username, password, logintypeArg):
     if logintypeArg == '1':
         cursor.execute("SELECT * FROM advisors WHERE Username=:username AND Password=:password",{"username":username, "password":password})
@@ -208,45 +204,40 @@ connection.commit()
 #cursor.execute("SELECT * FROM clients WHERE Full_Name='{}'".format(bob))
 
 
-def isValidName(name):
-    minlen = 1
-    maxlen = 25
+def ValidateName (name):
+    while not re.match('^[a-zA-Z]{1,40}+\ +([a-zA-Z]{1,40})+$', name):
+        name = input("Please enter a valid full name (Firstname and lastname with a space between them): ")
+    return name
 
-    #Checks the length of the name
-    if len(name)< minlen:
-        return "Name must be at least 1 character"
-    if len(name) > maxlen:
-        return "Name is too long"
+def ValidateStreetName (streetname):
+    while not re.match('^([a-zA-Z]{1,50})+$', streetname.replace(" ","")): 
+        streetname = input("Please enter a valid street name: ")
+    return streetname
 
-    #Checks if all characters in the string are alphabetic
-    if re.match('^[a-zA-Z]+\ +[a-zA-Z]+$', name):
-        return "Valid"
-    return "Invalid"
+def ValidateHouseNumber (housenumber):
+    while not re.match('^([a-zA-Z0-9]{1,20})+$', housenumber):
+        housenumber = input("Please enter a valid house number: ")
+    return housenumber
 
+def ValidateZipCode (zipcode):
+    while not re.match("^[0-9]{4}([a-zA-Z]{2})$", zipcode):
+        zipcode = input("Please enter a valid zipcode (zipcode should be 4 numbers and 2 letters with no space): ")
+    return zipcode
 
-def isValidStreetname (streetname):
-    if re.match('^[a-zA-Z]+$', streetname.replace(" ","")): 
-        return "Valid"
-    return "Invalid"
+def ValidateEmail (email):
+    while not re.match('^([A-Za-z0-9._%+-]{2,40})+@([A-Za-z0-9.-]{2,20})+\.[A-Z|a-z]{2,}$', email):  
+        email = input("Please enter a valid email address: ")
+    return email
 
-
-def isValidHouseNumber (housenumber):
-    if re.match('^[a-zA-Z0-9]+$', housenumber):
-        return "Valid"
-    return "Invalid"
-
-
-def isValidZipcode (zipcode):
-    if re.match("^[0-9]{4}([a-zA-Z]{2})$", zipcode):
-        return "Valid"
-    return "Invalid"
-
-def isValidEmail (email):
-    if re.match('^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$', email):  
-        return "Valid"
-    return "Invalid"
-
-def isValidPhonenumber(mobile):
-    if re.match('^[0-9]{8}$', mobile):  
-        return "Valid"
-    return "Invalid"
+def ValidatePhoneNumber (mobile):
+    while not re.match('^[0-9]{8}$', mobile):  
+       mobile = input("Please enter a valid phone number: +31-6-")
+    return mobile
+    
+def ValidateCity (city, cities):
+    while city not in cities:
+        print ("Please choose one from the list below:")
+        for city in cities:
+            print("- " + city )
+        city = input("\nCity: ")
+    return city

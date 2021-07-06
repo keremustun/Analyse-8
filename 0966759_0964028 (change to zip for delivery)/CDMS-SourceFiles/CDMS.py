@@ -40,7 +40,7 @@ def login(logintypeArg):
         elif loginPassed == "systemadmin":
             user = database.getUser(username,password,logintypeArg)
             return user
-        elif loginpassed == "advisor":
+        elif loginPassed == "advisor":
             user = database.getUser(username,password,logintypeArg)
             return user
         else:
