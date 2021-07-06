@@ -246,17 +246,29 @@ def showAllClients():
     results = cursor.fetchall()
     return results
 
-def getColumns(tableName):
+def getColumns(tableName,allusers):
     cursor.execute("PRAGMA table_info({})".format(tableName))
     tableInfo = cursor.fetchall()
-    columns = "=" * 80 + "\nTable Name: {}\nColumns:\n".format(tableName)
-    currentColumn = 0
-    for column in tableInfo:
-        if currentColumn != (len(tableInfo)-1):
-            columns += column[1] + ", "
-        else:
-            columns += column[1]
-        currentColumn += 1
+    columns = ''
+    if allusers:
+        columns = "=" * 80 + "\nTable Name: All System Users\nColumns:\n"
+        currentColumn = 0
+        allUserColumns = ['id', 'Role', 'Username']
+        for column in allUserColumns:
+            if currentColumn != (len(tableInfo)-1):
+                columns += column + ", "
+            else:
+                columns += column
+            currentColumn += 1
+    else:
+        columns = "=" * 80 + "\nTable Name: {}\nColumns:\n".format(tableName)
+        currentColumn = 0
+        for column in tableInfo:
+            if currentColumn != (len(tableInfo)-1):
+                columns += column[1] + ", "
+            else:
+                columns += column[1]
+            currentColumn += 1
     print("\n"*30)
     print(columns)
     print("-"*80)
@@ -292,7 +304,7 @@ Enter 'x' to exit\n\n")
       return
     elif clientId == 'list':
         allClients = showAllClients()
-        getColumns("clients")
+        getColumns("clients",False)
         for client in allClients:
             print(client )
         print("="*80)
@@ -302,7 +314,7 @@ Enter 'x' to exit\n\n")
             print("Client doesn't exist")
         else:
             print("\n" * 40)
-            getColumns("clients")
+            getColumns("clients",False)
             print("Client info: " + str(clientInfo[0]))
             print("="*80)
 
@@ -331,7 +343,7 @@ Enter 'x' to exit\n\n")
       return
     elif clientId == 'list':
         allClients = showAllClients()
-        getColumns("clients")
+        getColumns("clients",False)
         for client in allClients:
             print(client )
         print("="*80)
@@ -341,7 +353,7 @@ Enter 'x' to exit\n\n")
             print("Client doesn't exist")
         else:
             print("\n" * 40)
-            getColumns("clients")
+            getColumns("clients",False)
             print("Client info: " + str(clientInfo[0]))
             print("="*80)
 
@@ -375,7 +387,7 @@ Choice: ")
 
         elif clientId == 'list':
             allClients = showAllClients()
-            getColumns("clients")
+            getColumns("clients",False)
             for client in allClients:
                 print(client )
             print("="*80)
@@ -388,7 +400,24 @@ Choice: ")
             
 
 
+def listAllUsers():
+    print("\n" * 30)
+    getColumns('advisors',True)
 
+    print("('SuprAdmID:0', 'Super Admin', 'SupaAdmin' ")
+    print("~"*80)
+    cursor.execute("SELECT ('AdvisorID:' || id) as id , 'Advisor' as Role, Username FROM advisors")
+    advisors = cursor.fetchall()
+    for advisor in advisors:
+        print(advisor)
+    print("~"*80)
+    cursor.execute("SELECT ('SystAdmID:' || id) as id , 'System Admin' as Role, Username FROM sysadmins")
+    sysadmins = cursor.fetchall()
+    for sysadmin in sysadmins:
+        print(sysadmin)
+    print("="*80)
+    input("Enter any key to exit\n")
+   
 
 
 

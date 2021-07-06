@@ -66,7 +66,7 @@ class SystemAdmin(Advisor):
         if action == "5":
             deleteClient()
         if action == "6":
-            print("x")  
+            listAllUsers()
         if action == "7":
             print("x")
         if action == "8":
