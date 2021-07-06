@@ -1,5 +1,6 @@
 import sqlite3
 import re
+import sys
 
 connection = sqlite3.connect('CDMS.db')
 cursor = connection.cursor()
@@ -74,6 +75,14 @@ def registerClient():
     address = f"{streetName} {houseNumber}, {zipCode}, {city}"
     email  = ValidateEmail (input("\n3. Email address: "))
     mobile =ValidatePhoneNumber (input("\n4. Mobile: +31-6-"))
+
+    if name == None or streetName == None or houseNumber == None or zipCode == None or city == None or address == None or email == None or mobile == None :
+        print("Something Wrong happened")
+        sys.exit()
+    
+    if name == "" or streetName == "" or houseNumber == "" or zipCode == "" or city == "" or address == "" or email == "" or mobile == "" :
+        print("Something Wrong happened")
+        sys.exit()
 
     addClientToDb(name,address,email,mobile)
     print("\n"+ "="*40)
@@ -205,7 +214,7 @@ connection.commit()
 
 
 def ValidateName (name):
-    while not re.match('^[a-zA-Z]{1,40}+\ +([a-zA-Z]{1,40})+$', name):
+    while not re.match('^([a-zA-Z]{1,40})+\ +([a-zA-Z]{1,40})+$', name):
         name = input("Please enter a valid full name (Firstname and lastname with a space between them): ")
     return name
 
