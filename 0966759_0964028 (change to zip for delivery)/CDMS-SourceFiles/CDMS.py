@@ -1,6 +1,6 @@
 # The system is run by running this script
 from users import *
-import database
+from database import AuthenticateLogin, getUser
 
 userTypes = {"1":"Advisor", "2":"System administrator", "3":"Super administrator"}
 currentUserName = ""
@@ -43,15 +43,15 @@ def login(logintypeArg):
             print("Enter your username and password")
             username = input("Username: ")
             password = input("Password: ")
-            loginPassed = database.AuthenticateLogin(username, password, logintypeArg)
+            loginPassed = AuthenticateLogin(username, password, logintypeArg)
 
         if loginPassed == "superadmin":
             return "superadmin"
         elif loginPassed == "systemadmin":
-            user = database.getUser(username,password,logintypeArg)
+            user = getUser(username,password,logintypeArg)
             return user
         elif loginPassed == "advisor":
-            user = database.getUser(username,password,logintypeArg)
+            user = getUser(username,password,logintypeArg)
             return user
         else:
             strikes += 1
@@ -67,19 +67,19 @@ def initializeUser(user,logintypeArg):
     getUserName(user)
     if logintypeArg == '1':
         print("Advisor login")
-        logAction(username, "Logged In", "Advisor logged in", "No")
+        logAction(currentUserName, "Logged In", "Advisor logged in", "No")
         userSession = Advisor(user)
         return userSession
 
     elif logintypeArg == '2':
         print("System admin login")
-        logAction(username, "Logged In", "System Admin logged in", "No")
+        logAction(currentUserName, "Logged In", "System Admin logged in", "No")
         userSession = SystemAdmin(user)
         return userSession
         
     else:
         print("Super admin login")
-        logAction(username, "Logged In", "Super Admin logged in", "No")
+        logAction(currentUserName, "Logged In", "Super Admin logged in", "No")
         userSession = SuperAdmin(user)
         return userSession
 
@@ -87,6 +87,7 @@ def showMenu():
     currentUser.showMenu()
 
 def getUserName(user):
+    global currentUserName
     print(user)
     if user == "superadmin":
         currentUserName = "Super Admin"

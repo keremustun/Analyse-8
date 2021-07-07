@@ -1,5 +1,4 @@
 import sqlite3
-from CDMS import currentUserName
 connection = sqlite3.connect('CDMS.db')
 cursor = connection.cursor()
 
@@ -193,14 +192,7 @@ def authenticatePassword(pw, un, logintypeArg):
         return False
 
 
-
-
-
-
-
-
-def changePassword(un,logintypeArg):
-    def updatePassword(newpw, un, logintypeArg):
+def updatePassword(newpw, un, logintypeArg):
         if logintypeArg == "1":
             updatePassSQL = "UPDATE advisors SET Password = ? WHERE Username = ?"
             args = (newpw, un)
@@ -211,6 +203,9 @@ def changePassword(un,logintypeArg):
             args = (newpw, un)
             cursor.execute(updatePassSQL,args)
             connection.commit()
+
+def changePassword(un,logintypeArg):
+    
 
     userInput = ''
     strikes = 0
@@ -240,6 +235,39 @@ def changePassword(un,logintypeArg):
                 userInput = ''
 
 
+def resetPassword(logintypeArg):
+    usertype = ""
+    if logintypeArg == "1":
+        usertype = "advisor"
+    else:
+        usertype = "system admin"
+
+    table = decideTable(usertype)
+
+    choicedesc = f"Enter the username of the {usertype} who's password you want to reset\nOR\nEnter 'list' to list all {usertype}s\nOR\nEnter 'x' to exit\n\n"
+    choice = input(choicedesc)
+
+    success = False
+    while not success:
+        print("\n\n")
+        if choice == 'x':
+            return
+        elif choice == 'list':
+            getColumns(table, False)
+            rows = showAllFromTable(table)
+            for row in rows:
+                print(row)
+            print("=" * 80)
+            choice = input(f"\nEnter the username of the {usertype} who's password you want to reset\nOR\nEnter 'x' to exit\n\n")
+        else: 
+                newPass        = input("Enter the new password: ")
+                confirmNewPass = input("Enter the new password again for confirmation: ")
+                if newPass == confirmNewPass:
+                    updatePassword(newPass, id, logintypeArg)
+                    print("Password has been succesfully updated!")
+                    return
+                else:
+                    print("Passwords dont match")
 
 
 
@@ -468,7 +496,6 @@ def drop_table():
     cursor.execute("DROP TABLE {}".format(name))
     connection.commit()
     
-connection.commit()
 #FOREIGN KEY(store_id) REFERENCES stores(store_id)) (reminder on how to do foreign keys)
 
 #--------------INSERT INTO CLIENT

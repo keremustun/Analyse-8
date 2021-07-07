@@ -1,5 +1,4 @@
 from database import *
-from CDMS import currentUserName
 #Clients don't log into the system, so no class for a client.
 #An advisor, a system admin or a super admin, can log into the system, so we use classes for them.
 
@@ -74,7 +73,7 @@ class SystemAdmin(Advisor):
         if action == "9":
             deleteRecord('advisor')
         if action == "10":
-            print("x") 
+            resetPassword("1")
         if action == "11":
             print("x")
         if action == "12":
