@@ -5,6 +5,7 @@
 
 ALWAYS TODO: ALL SQL EXECUTIONS MUST BE SQL INJECTION SAFE, SO EVERY TIME YOU PASS DATA, USE A PREPARED STATEMENT
 
+change super admin loginpassed
 ##################################################################################################################
 
 Menu:
@@ -27,9 +28,9 @@ Menu:
     
 - Super Admin (main use is to define sys admins)
     - everything an sysadmin can do
-    - add sysad
-    - mod sysad
-    - del sysad
+    + add sysad
+    + mod sysad
+    + del sysad
     - reset sysad pass (temp pass)
 
 

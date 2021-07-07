@@ -3,6 +3,7 @@ from users import *
 import database
 
 userTypes = {"1":"Advisor", "2":"System administrator", "3":"Super administrator"}
+currentUserName = ""
 
 def getLoginType(loggedout):
     print("\n" *40)
@@ -63,25 +64,35 @@ def login(logintypeArg):
 # Login passed, creating user session...
 def initializeUser(user,logintypeArg):
     print("\n" * 30)
+    getUserName(user)
     if logintypeArg == '1':
         print("Advisor login")
+        logAction(username, "Logged In", "Advisor logged in", "No")
         userSession = Advisor(user)
         return userSession
 
     elif logintypeArg == '2':
         print("System admin login")
+        logAction(username, "Logged In", "System Admin logged in", "No")
         userSession = SystemAdmin(user)
         return userSession
         
     else:
         print("Super admin login")
+        logAction(username, "Logged In", "Super Admin logged in", "No")
         userSession = SuperAdmin(user)
         return userSession
 
 def showMenu():
     currentUser.showMenu()
 
-
+def getUserName(user):
+    print(user)
+    if user == "superadmin":
+        currentUserName = "Super Admin"
+    else:
+        currentUserName = user[0][1]
+    
 
 #××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××
 #×××××××××××××××××××××××××××××××××××××××××××××××× PROGRAM START ×××××××××××××××××××××××××××××××××××××××××××××××××

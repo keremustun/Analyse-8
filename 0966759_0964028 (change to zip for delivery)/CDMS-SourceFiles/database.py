@@ -1,5 +1,5 @@
 import sqlite3
-
+from CDMS import currentUserName
 connection = sqlite3.connect('CDMS.db')
 cursor = connection.cursor()
 
@@ -18,7 +18,7 @@ cursor.execute(createTableSystemAdmins)
 
 
 createTableLog = """CREATE TABLE IF NOT EXISTS
-log(id INTEGER PRIMARY KEY AUTOINCREMENT, Username TEXT, Date TEXT, Description_of_activity TEXT, Additional_information TEXT, Suspicious TEXT)"""
+log(id INTEGER PRIMARY KEY AUTOINCREMENT, Username TEXT, Date TEXT, Time TEXT, Description_of_activity TEXT, Additional_information TEXT, Suspicious TEXT)"""
 cursor.execute(createTableLog)
 
 
@@ -299,7 +299,7 @@ def decideTable(usertype):
         table = "clients"
     elif usertype == "advisor":
         table = "advisors"
-    else:
+    elif usertype == "system admin":
         table = "sysadmins"
     print("\n" * 30)
     return table
@@ -439,17 +439,36 @@ def listAllUsers():
     input("Enter any key to exit\n")
    
 
+def logAction(un,dc,ad,sp):
+    username = un
+    from datetime import date, datetime
+    date = str(date.today())
+    time = str((datetime.now()).strftime("%H:%M:%S"))
+    desc = dc
+    addinfo = ad
+    sus = sp
+
+    sql = """INSERT INTO log (Username, Date, Time, Description_of_activity, Additional_information, Suspicious)
+                      VALUES (?,?,?,?,?,?)"""
+    args = (un,date,time,desc,addinfo,sus)
+    cursor.execute(sql,args) 
+    connection.commit()
+    
 
 
 
-
-def drop_table():
+def empty_table():
     name = input("delete content of table. tablename: ")
     cursor.execute("DELETE FROM {}".format(name))
     connection.commit()
     
 
-
+def drop_table():
+    name = input("drop table. tablename: ")
+    cursor.execute("DROP TABLE {}".format(name))
+    connection.commit()
+    
+connection.commit()
 #FOREIGN KEY(store_id) REFERENCES stores(store_id)) (reminder on how to do foreign keys)
 
 #--------------INSERT INTO CLIENT
