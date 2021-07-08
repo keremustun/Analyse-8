@@ -32,9 +32,9 @@ class Advisor():
         if action == "2":
             registerClient()    
         if action == "3":
-            modClient()
+            modRecord("client")
         if action == "4":
-            searchClient()
+            searchRecord('client')
         if action == "x":
             return False
 
@@ -63,23 +63,30 @@ class SystemAdmin(Advisor):
     def menuActions(action,userInfo,logintypeArg):
         Advisor.menuActions(action, userInfo, logintypeArg)
         if action == "5":
-            print("x")
+            deleteRecord('client')
         if action == "6":
-            print("x")  
+            listAllUsers()
         if action == "7":
-            print("x")
+            registerAdvisor()
         if action == "8":
-            print("x")
+            modRecord("advisor")
         if action == "9":
-            print("x")
+            deleteRecord('advisor')
         if action == "10":
-            print("x") 
+            resetPassword("1")
         if action == "11":
             print("x")
         if action == "12":
             print("x")
 
+    
+        
 
+
+    def listUsers():
+        print("users")
+
+    
 
 #System admin class : Advisor
 
@@ -115,19 +122,19 @@ class SuperAdmin(SystemAdmin):
         if action == "1":
             registerClient()    
         if action == "2":
-            modClient()
+            modRecord('client')
         if action == "3":
-            searchClient()
+            searchRecord('client')
         if action == "4":
-            print("x")
+            deleteRecord('client')
         if action == "5":
-            print("x")
+            listAllUsers()
         if action == "6":
-            print("x")  
+            registerAdvisor()
         if action == "7":
-            print("x")
+            modRecord('advisor')
         if action == "8":
-            print("x")
+            deleteRecord('advisor')
         if action == "9":
             print("x")
         if action == "10":
@@ -135,11 +142,11 @@ class SuperAdmin(SystemAdmin):
         if action == "11":
             print("x")
         if action == "12":
-            print("x")
+            registerSystemAdmin()
         if action == "13":
-            print("x")
+            modRecord("system admin")
         if action == "14":
-            print("x")
+            deleteRecord("system admin")
         if action == "15":
             print("x")
         if action == "x":
