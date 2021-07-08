@@ -1,9 +1,9 @@
 # The system is run by running this script
 from users import *
 from database import AuthenticateLogin, getUser
+import currentuser
 
 userTypes = {"1":"Advisor", "2":"System administrator", "3":"Super administrator"}
-currentUserName = ""
 
 def getLoginType(loggedout):
     print("\n" *40)
@@ -34,6 +34,7 @@ def getLoginType(loggedout):
 
 # Enter username and password
 def login(logintypeArg):
+    global currentUserName
     strikes = 0
     loginPassed = False
     while not loginPassed:
@@ -46,18 +47,20 @@ def login(logintypeArg):
             loginPassed = AuthenticateLogin(username, password, logintypeArg)
 
             if loginPassed == "superadmin":
-                return "superadmin"
+                currentuser.currentUserName = username
+                return 
             elif loginPassed == "systemadmin":
-                user = getUser(username,password,logintypeArg)
-                return user
+                currentuser.currentUserName = username
+                return 
             elif loginPassed == "advisor":
-                user = getUser(username,password,logintypeArg)
-                return user
+                currentuser.currentUserName = username
+                return 
             else:
                 strikes += 1
                 if strikes % 5 == 0:
+                    username = ""
                     print("\nYou entered a wrong username or password too many times. Action logged as suspicious.")
-                    logAction("None", "User tries to log in", f"Login failed too many times, Username used: {username}, Password used: {password}", "Yes")
+                    logAction("User tries to log in", f"Login failed too many times, Username used: {username}, Password used: {password}", "Yes")
                     import time
                     blocktime =  (strikes * 6) 
                     while blocktime > 0:
@@ -69,32 +72,30 @@ def login(logintypeArg):
                         blocktime -= 1
                         time.sleep(1)
                     
+                    
 
                 else:
                     print("You entered a wrong username or password. Please try again")
-                    logAction("None", "User tries to log in", f"Login failed, Username used: {username}, Password used: {password}", "No")
+                    logAction("User tries to log in", f"Login failed, Username used: {username}, Password used: {password}", "No")
 
 
 # Login passed, creating user session...
-def initializeUser(user,logintypeArg):
+def initializeUser(logintypeArg):
     print("\n" * 30)
+    userSession = ""
     if logintypeArg == '1':
-        print("Advisor login")
-        userSession = Advisor(user)
-        logAction(userSession.Username, "Logged In", "Advisor logged in", "No")
-        return userSession
+        userSession = Advisor()
+        logAction("Logged In", "Advisor logged in", "No")
 
     elif logintypeArg == '2':
-        print("System admin login")
-        userSession = SystemAdmin(user)
-        logAction(userSession.Username, "Logged In", "System Admin logged in", "No")
-        return userSession
+        userSession = SystemAdmin()
+        logAction("Logged In", "System Admin logged in", "No")
         
     else:
-        print("Super admin login")
         userSession = SuperAdmin()
-        logAction(userSession.Username, "Logged In", "Super Admin logged in", "No")
-        return userSession
+        logAction("Logged In", "Super Admin logged in", "No")
+
+    return userSession
 
 def showMenu():
     currentUser.showMenu()
@@ -113,7 +114,7 @@ while running:
 
     #input Username and password
     currentUser = login(loginType)
-    currentUser = initializeUser(currentUser,loginType)
+    currentUser = initializeUser(loginType)
 
     loggedIn = True
     print("\n" * 30)

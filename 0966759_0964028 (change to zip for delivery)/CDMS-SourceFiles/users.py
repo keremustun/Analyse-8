@@ -1,13 +1,14 @@
 from database import *
+
 #Clients don't log into the system, so no class for a client.
 #An advisor, a system admin or a super admin, can log into the system, so we use classes for them.
 
 
 
 class Advisor():
-    def __init__(self, userInfo):
-        self.Info = userInfo
-        self.Username = userInfo[0][1]
+    def __init__(self):
+        from currentuser import currentUserName
+        self.UserName = currentUserName
         self.Login_Type = "1"
 
     def showMenu(self):
@@ -16,7 +17,7 @@ class Advisor():
             self.menuOptions()
             print("Enter x to log out") 
             action = input("\nAction: ")
-            self.menuActions(action,self.Info,self.Login_Type)
+            self.menuActions(action,self.Login_Type)
 
     @staticmethod
     def menuOptions():
@@ -27,9 +28,9 @@ class Advisor():
         print("Enter 4 to search and retrieve info of a client")
 
     @staticmethod
-    def menuActions(action,userInfo,logintypeArg):
+    def menuActions(action,logintypeArg):
         if action == "1":
-            changePassword(userInfo[0][1],logintypeArg)
+            changePassword(self.UserName,logintypeArg)
         if action == "2":
             registerClient()    
         if action == "3":
@@ -37,15 +38,16 @@ class Advisor():
         if action == "4":
             searchRecord('client')
         if action == "x":
-            return False
+        
+            from currentuser import currentUserName
+            currentUserName === "Not logged in"
 
     
 
     
 
 class SystemAdmin(Advisor):
-    def __init__(self, userInfo):
-        super(SystemAdmin, self).__init__(userInfo)
+    def __init__(self):
         self.Login_Type = '2'
 
     @staticmethod
@@ -62,8 +64,8 @@ class SystemAdmin(Advisor):
         unread_sus()
 
     @staticmethod
-    def menuActions(action,userInfo,logintypeArg):
-        Advisor.menuActions(action, userInfo, logintypeArg)
+    def menuActions(action,logintypeArg):
+        Advisor.menuActions(action, logintypeArg)
         if action == "5":
             deleteRecord('client')
         if action == "6":
@@ -106,8 +108,8 @@ def unread_sus():
 
 class SuperAdmin(SystemAdmin):
     def __init__(self):
-        self.Username = "superadmin"
-        self.Password = "Admin!23"
+        from currentuser import currentUserName
+        self.UserName = currentUserName
         self.Login_Type = '3'
 
     def showMenu(self):
@@ -122,7 +124,7 @@ class SuperAdmin(SystemAdmin):
 
             print("Enter 'x' to log out") 
             action = input("\nAction: ")
-            self.menuActions(action,self.Username,self.Login_Type)
+            self.menuActions(action,self.UserName,self.Login_Type)
 
     
 
@@ -185,5 +187,6 @@ class SuperAdmin(SystemAdmin):
             showSus()
             
         if action == "x":
-            return False
+            from currentuser import currentUserName
+            currentUserName = "Not logged in"
             

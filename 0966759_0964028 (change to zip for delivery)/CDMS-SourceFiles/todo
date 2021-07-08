@@ -42,11 +42,11 @@ Log:
 - Log all activities
     - advisor
     ++ update password
-    -- add client
+    ++ add client
     -- mod client
     -- search for client
     -- log out
-    
+
     - sysad
     - superad
 

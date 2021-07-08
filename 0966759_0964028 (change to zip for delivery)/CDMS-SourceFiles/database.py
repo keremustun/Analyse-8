@@ -1,4 +1,5 @@
 import sqlite3
+
 connection = sqlite3.connect('CDMS.db')
 cursor = connection.cursor()
 
@@ -60,6 +61,7 @@ def registerClient():
         sql = "INSERT INTO clients (Full_Name, Address, Email_Address, Mobile_Phone) VALUES (?,?,?,?)"
         cursor.execute(sql,sqlargs)
         connection.commit()
+        logAction("Client has been added to the database", f"Inputs: {sqlargs}", "No")
 
     name            = input("\n1. Enter the name of the new client: ")
     print(                  "\n2. Entering the address...")
@@ -85,6 +87,7 @@ def registerAdvisor():
         sql = "INSERT INTO advisors (Username, Password, First_Name, Last_Name, Registered_Date) VALUES (?,?,?,?,?)"
         cursor.execute(sql,sqlargs)
         connection.commit()
+        logAction("Advisor has been added to the database", f"Inputs: {sqlargs}", "No")
 
     usernameOK = False
     while not usernameOK:
@@ -116,6 +119,7 @@ def registerSystemAdmin():
         sql = "INSERT INTO sysadmins (Username, Password, First_Name, Last_Name, Registered_Date) VALUES (?,?,?,?,?)"
         cursor.execute(sql,sqlargs)
         connection.commit()
+        logAction("System admin has been added to the database", f"Inputs: {sqlargs}", "No")
    
     usernameOK = False
     while not usernameOK:
@@ -219,7 +223,7 @@ def changePassword(un,logintypeArg):
             if newPass == confirmNewPass:
                 updatePassword(newPass, un, logintypeArg)
                 print("Password has been succesfully updated!")
-                logAction(un, "User has updated their password", "", "No")
+                logAction("User has updated their password", "", "No")
                 return
             else:
                 print("Passwords dont match")
@@ -228,11 +232,11 @@ def changePassword(un,logintypeArg):
             strikes += 1
             if strikes == 5:
                 print("Incorrect password too many times. Logging out...")
-                logAction(un, "User tried to update their password", f"Password incorrect too many times, User input: {userInput}", "Yes")
+                logAction("User tried to update their password", f"Password incorrect too many times, User input: {userInput}", "Yes")
                 quit()
             else:
                 print("Incorrect password. Please try again.")
-                logAction(un, "User tried to update their password", f"Password incorrect, user input: {userInput}", "No")
+                logAction("User tried to update their password", f"Password incorrect, user input: {userInput}", "No")
                 userInput = ''
 
 
@@ -387,6 +391,7 @@ def updateInfo(columnName,table,newInfo,uid):
     args = (newInfo,uid)
     cursor.execute(sql,args)
     connection.commit()
+    logAction(f"Info in {table} table updated", f"Column {columnName} at id: {uid} changed to {newInfo}", "No")
     print("Update successful")
 
 def searchRecord(usertype):
@@ -483,8 +488,9 @@ def listAllUsers():
     input("Enter any key to exit\n")
    
 
-def logAction(un,dc,ad,sp):
-    username = un
+def logAction(dc,ad,sp):
+    from currentuser import currentUserName
+    username = currentUserName
     from datetime import date, datetime
     date = str(date.today())
     time = str((datetime.now()).strftime("%H:%M:%S"))
@@ -494,7 +500,7 @@ def logAction(un,dc,ad,sp):
 
     sql = """INSERT INTO log (Username, Date, Time, Description_of_activity, Additional_information, Suspicious)
                       VALUES (?,?,?,?,?,?)"""
-    args = (un,date,time,desc,addinfo,sus)
+    args = (username,date,time,desc,addinfo,sus)
     cursor.execute(sql,args) 
     connection.commit() 
 
