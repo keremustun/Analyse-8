@@ -38,13 +38,13 @@ Menu:
 
 
 #######################################################################################################
-Log (check what kind of file log should be):
+Log:
 - Log all activities
 - Flag suspicious activities:
     - Input other than predefined Input
     - ...
 - encrypted and only readable through the UI, by an admin
-- Produce alert to admin for unread suspicous activities
++ Produce alert to admin for unread suspicous activities
 
 Encryption with Caesar cypher or vigenere cypher:
 - Usernames

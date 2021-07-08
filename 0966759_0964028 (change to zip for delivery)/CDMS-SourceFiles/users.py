@@ -102,14 +102,23 @@ class SuperAdmin(SystemAdmin):
     def showMenu(self):
         action = ''
         while action != 'x':
+            unread_sus = checkForSus()
             print("\n" * 30)
             print("\n\nMenu | Choose an action\n" + "="*50)
             self.menuOptions()
-            print("Enter x to log out") 
+            
+            if unread_sus != 0:
+                if unread_sus == 1:
+                    print(f"\nThere is {unread_sus} suspicious activity logged.")
+                else:
+                    print(f"\nThere are {unread_sus} suspicious activities logged.")
+                print("Enter 'sus' to read them\n")
+
+            print("Enter 'x' to log out") 
             action = input("\nAction: ")
             self.menuActions(action,self.Username,self.Login_Type)
 
-
+    
 
     def menuOptions(self):
         print("Enter 1 to add a new client ")
@@ -128,6 +137,7 @@ class SuperAdmin(SystemAdmin):
         print("Enter 14 to delete a system admin")
         print("Enter 15 to reset a system admin's password (temporary password)")
         print("Enter 16 to empty a table")
+        print("Enter 17 to drop a table")
        
     
     def menuActions(self,action,un,logintypeArg):
@@ -163,6 +173,11 @@ class SuperAdmin(SystemAdmin):
             resetPassword("2")
         if action == "16":
             empty_table()
+        if action == "17":
+            drop_table()
+        if action == 'sus':
+            showSus()
+            
         if action == "x":
             return False
             

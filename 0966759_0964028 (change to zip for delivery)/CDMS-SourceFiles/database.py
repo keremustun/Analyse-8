@@ -20,7 +20,11 @@ createTableLog = """CREATE TABLE IF NOT EXISTS
 log(id INTEGER PRIMARY KEY AUTOINCREMENT, Username TEXT, Date TEXT, Time TEXT, Description_of_activity TEXT, Additional_information TEXT, Suspicious TEXT)"""
 cursor.execute(createTableLog)
 
+createTableUnreadSuspicous = """CREATE TABLE IF NOT EXISTS
+unreadsuslogs(susID INTEGER PRIMARY KEY AUTOINCREMENT, Username TEXT, Date TEXT, Time TEXT, Description_of_activity TEXT, Additional_information TEXT)"""
+cursor.execute(createTableUnreadSuspicous)
 
+connection.commit()
 #=========================================================================================================   Register  =====================================
 
 cities = ["Rotterdam", "Amsterdam", "Den Haag", "Eindhoven","Maastricht","Delft","Breda","Haarlem","Utrecht","Leiden"]
@@ -265,7 +269,22 @@ def resetPassword(logintypeArg):
                 else:
                     print("Passwords dont match")
 
-
+def showSus():
+    choice = '' 
+    while choice != 'x':
+        rows = showAllFromTable("unreadsuslogs")
+        getColumns("unreadsuslogs", False)
+        for row in rows:
+            print(row)
+        print("=" * 70)
+        
+        choicedesc = "Enter the id of suspicious activity to mark it as read\nOR\nEnter'x' to exit\n\n"
+        choice = input(choicedesc)
+        if choice != 'x':
+            cursor.execute(f"DELETE FROM unreadsuslogs WHERE susID=:id",{"id":choice})
+            connection.commit()
+            print("\n" * 40)
+            return
 
 
 def showAllFromTable(tablename):
@@ -476,8 +495,22 @@ def logAction(un,dc,ad,sp):
                       VALUES (?,?,?,?,?,?)"""
     args = (un,date,time,desc,addinfo,sus)
     cursor.execute(sql,args) 
-    connection.commit()
+    connection.commit() 
+
+    if sus == "Yes":
+        
+        sql = """INSERT INTO unreadsuslogs (Username, Date, Time, Description_of_activity, Additional_information)
+        VALUES (?,?,?,?,?)"""
+        args = (username,date,time,desc,addinfo)
+        cursor.execute(sql,args)
+        connection.commit()
+
     
+def checkForSus():
+    sql = """SELECT COUNT(*) FROM unreadsuslogs"""
+    cursor.execute(sql)
+    res = cursor.fetchall()
+    return res[0][0]
 
 def show_log():
     print("\n"*30)
