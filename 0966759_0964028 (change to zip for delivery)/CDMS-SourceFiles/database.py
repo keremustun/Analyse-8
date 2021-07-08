@@ -194,14 +194,10 @@ def authenticatePassword(pw, un, logintypeArg):
 
 def updatePassword(newpw, un, logintypeArg):
         if logintypeArg == "1":
-            updatePassSQL = "UPDATE advisors SET Password = ? WHERE Username = ?"
-            args = (newpw, un)
-            cursor.execute(updatePassSQL,args)
+            cursor.execute("UPDATE advisors SET Password=:pw WHERE Username=:un",{"pw":newpw,"un":un})
             connection.commit()
         else:
-            updatePassSQL = "UPDATE sysadmins SET Password = ? WHERE Username = ?"
-            args = (newpw, un)
-            cursor.execute(updatePassSQL,args)
+            cursor.execute("UPDATE sysadmins SET Password=:pw WHERE Username=:un",{"pw":newpw,"un":un})
             connection.commit()
 
 def changePassword(un,logintypeArg):
@@ -263,7 +259,7 @@ def resetPassword(logintypeArg):
                 newPass        = input("Enter the new password: ")
                 confirmNewPass = input("Enter the new password again for confirmation: ")
                 if newPass == confirmNewPass:
-                    updatePassword(newPass, id, logintypeArg)
+                    updatePassword(newPass, choice, logintypeArg)
                     print("Password has been succesfully updated!")
                     return
                 else:

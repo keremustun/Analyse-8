@@ -22,7 +22,7 @@ Menu:
     + add Advisor
     + mod Advisor
     + del Advisor
-    - reset Advisor password (temp pass)
+    + reset Advisor password (temp pass)
     - backup System
     - see log
     
