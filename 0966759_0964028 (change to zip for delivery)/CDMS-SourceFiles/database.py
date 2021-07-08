@@ -205,8 +205,6 @@ def updatePassword(newpw, un, logintypeArg):
             connection.commit()
 
 def changePassword(un,logintypeArg):
-    
-
     userInput = ''
     strikes = 0
     while userInput == '': 
@@ -221,17 +219,20 @@ def changePassword(un,logintypeArg):
             if newPass == confirmNewPass:
                 updatePassword(newPass, un, logintypeArg)
                 print("Password has been succesfully updated!")
+                logAction(un, "User has updated their password", "", "No")
                 return
             else:
                 print("Passwords dont match")
                 userInput = ''
         else:
             strikes += 1
-            if strikes == 3:
+            if strikes == 5:
                 print("Incorrect password too many times. Logging out...")
+                logAction(un, "User tried to update their password", f"Password incorrect too many times, User input: {userInput}", "Yes")
                 quit()
             else:
                 print("Incorrect password. Please try again.")
+                logAction(un, "User tried to update their password", f"Password incorrect, user input: {userInput}", "No")
                 userInput = ''
 
 

@@ -40,6 +40,16 @@ Menu:
 #######################################################################################################
 Log:
 - Log all activities
+    - advisor
+    ++ update password
+    -- add client
+    -- mod client
+    -- search for client
+    -- log out
+    
+    - sysad
+    - superad
+
 - Flag suspicious activities:
     - Input other than predefined Input
     - ...

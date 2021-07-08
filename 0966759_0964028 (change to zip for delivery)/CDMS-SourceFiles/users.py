@@ -164,7 +164,7 @@ class SuperAdmin(SystemAdmin):
         if action == "8":
             deleteRecord('advisor')
         if action == "9":
-            print("x")
+            resetPassword("1")
         if action == "10":
             print("x") 
         if action == "11":
