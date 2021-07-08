@@ -59,6 +59,7 @@ class SystemAdmin(Advisor):
         print("Enter 10 to reset an advisor's password (temporary password)")
         print("Enter 11 to make a backup of the system")
         print("Enter 12 to see the logs")
+        unread_sus()
 
     @staticmethod
     def menuActions(action,userInfo,logintypeArg):
@@ -79,6 +80,8 @@ class SystemAdmin(Advisor):
             print("x")
         if action == "12":
             show_log()
+        if action == "sus":
+            showSus()
 
     
         
@@ -92,6 +95,14 @@ class SystemAdmin(Advisor):
 #System admin class : Advisor
 
 #Super admin class : System admin
+def unread_sus():
+    unread = checkForSus()
+    if unread != 0:
+        if unread == 1:
+            print(f"\nThere is {unread} suspicious activity logged.")
+        else:
+            print(f"\nThere are {unread} suspicious activities logged.")
+        print("Enter 'sus' to read them\n")
 
 class SuperAdmin(SystemAdmin):
     def __init__(self):
@@ -102,17 +113,12 @@ class SuperAdmin(SystemAdmin):
     def showMenu(self):
         action = ''
         while action != 'x':
-            unread_sus = checkForSus()
+          
             print("\n" * 30)
             print("\n\nMenu | Choose an action\n" + "="*50)
             self.menuOptions()
             
-            if unread_sus != 0:
-                if unread_sus == 1:
-                    print(f"\nThere is {unread_sus} suspicious activity logged.")
-                else:
-                    print(f"\nThere are {unread_sus} suspicious activities logged.")
-                print("Enter 'sus' to read them\n")
+            unread_sus()
 
             print("Enter 'x' to log out") 
             action = input("\nAction: ")

@@ -509,7 +509,7 @@ def logAction(un,dc,ad,sp):
 def checkForSus():
     sql = """SELECT COUNT(*) FROM unreadsuslogs"""
     cursor.execute(sql)
-    res = cursor.fetchall()
+    res = cursor.fetchall()    
     return res[0][0]
 
 def show_log():
