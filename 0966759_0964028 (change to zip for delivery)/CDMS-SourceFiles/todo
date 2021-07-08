@@ -24,14 +24,14 @@ Menu:
     + del Advisor
     + reset Advisor password (temp pass)
     - backup System
-    - see log
+    + see log
     
 - Super Admin (main use is to define sys admins)
     - everything an sysadmin can do
     + add sysad
     + mod sysad
     + del sysad
-    - reset sysad pass (temp pass)
+    + reset sysad pass (temp pass)
 
 
 

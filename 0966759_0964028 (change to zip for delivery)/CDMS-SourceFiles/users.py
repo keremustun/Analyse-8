@@ -7,6 +7,7 @@ from database import *
 class Advisor():
     def __init__(self, userInfo):
         self.Info = userInfo
+        self.Username = userInfo[0][1]
         self.Login_Type = "1"
 
     def showMenu(self):
@@ -77,7 +78,7 @@ class SystemAdmin(Advisor):
         if action == "11":
             print("x")
         if action == "12":
-            print("x")
+            show_log()
 
     
         
@@ -93,14 +94,24 @@ class SystemAdmin(Advisor):
 #Super admin class : System admin
 
 class SuperAdmin(SystemAdmin):
-    def __init__(self, userInfo):
-        super(SuperAdmin, self).__init__(userInfo)
-        Username = "superadmin"
-        Password = "Admin!23"
+    def __init__(self):
+        self.Username = "superadmin"
+        self.Password = "Admin!23"
         self.Login_Type = '3'
 
-    @staticmethod
-    def menuOptions():
+    def showMenu(self):
+        action = ''
+        while action != 'x':
+            print("\n" * 30)
+            print("\n\nMenu | Choose an action\n" + "="*50)
+            self.menuOptions()
+            print("Enter x to log out") 
+            action = input("\nAction: ")
+            self.menuActions(action,self.Username,self.Login_Type)
+
+
+
+    def menuOptions(self):
         print("Enter 1 to add a new client ")
         print("Enter 2 to modify info of a client ")
         print("Enter 3 to search and retrieve info of a client")
@@ -116,9 +127,10 @@ class SuperAdmin(SystemAdmin):
         print("Enter 13 to mod a system admin")
         print("Enter 14 to delete a system admin")
         print("Enter 15 to reset a system admin's password (temporary password)")
+        print("Enter 16 to empty a table")
        
-    @staticmethod
-    def menuActions(action,userInfo,logintypeArg):
+    
+    def menuActions(self,action,un,logintypeArg):
         if action == "1":
             registerClient()    
         if action == "2":
@@ -140,7 +152,7 @@ class SuperAdmin(SystemAdmin):
         if action == "10":
             print("x") 
         if action == "11":
-            print("x")
+            show_log()
         if action == "12":
             registerSystemAdmin()
         if action == "13":
@@ -148,7 +160,9 @@ class SuperAdmin(SystemAdmin):
         if action == "14":
             deleteRecord("system admin")
         if action == "15":
-            print("x")
+            resetPassword("2")
+        if action == "16":
+            empty_table()
         if action == "x":
             return False
             

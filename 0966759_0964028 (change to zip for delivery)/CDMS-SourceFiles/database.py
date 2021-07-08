@@ -132,8 +132,8 @@ def registerSystemAdmin():
     from datetime import date
     date = str(date.today())
     addSystemAdminToDb(uname,psswd,fname,lname,date)
-    print("System admin " + uname + " has been registered on " + date)
-
+    print("\nSystem admin " + uname + " has been registered on " + date)
+    input("Enter any key to continue ")
 
 
 #--------------------------------------------------------------------------------------------------------------------------------
@@ -448,7 +448,7 @@ def listAllUsers():
     print("\n" * 30)
     getColumns('advisors',True)
 
-    print("('SuprAdmID:0', 'Super Admin', 'SupaAdmin' ")
+    print("('SuprAdmID:0', 'Super Admin', 'superadmin' ")
     print("~"*80)
     cursor.execute("SELECT ('AdvisorID:' || id) as id , 'Advisor' as Role, Username FROM advisors")
     advisors = cursor.fetchall()
@@ -479,6 +479,15 @@ def logAction(un,dc,ad,sp):
     connection.commit()
     
 
+def show_log():
+    print("\n"*30)
+    cursor.execute("SELECT * FROM log")
+    rows = cursor.fetchall()
+    getColumns("log", False)
+    for row in rows:
+        print(row)
+    print("="* 100)
+    input("\nEnter any key to continue ")
 
 
 def empty_table():
