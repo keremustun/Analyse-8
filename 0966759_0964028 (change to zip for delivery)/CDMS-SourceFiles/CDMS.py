@@ -38,16 +38,16 @@ def login(logintypeArg):
     strikes = 0
     loginPassed = False
     while not loginPassed:
-        if loginType == '3':
-            loginPassed = True
-        else:
+        # if loginType == '3':
+        #     loginPassed = True
+        # else:
             print("\nEnter your username and password")
             username = input("Username: ")
             password = input("Password: ")
             loginPassed = AuthenticateLogin(username, password, logintypeArg)
 
             if loginPassed == "superadmin":
-                currentuser.currentUserName = username
+                currentuser.currentUserName = "superadmin"
                 return 
             elif loginPassed == "systemadmin":
                 currentuser.currentUserName = username

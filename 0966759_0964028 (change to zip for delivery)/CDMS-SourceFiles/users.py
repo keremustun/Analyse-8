@@ -38,9 +38,9 @@ class Advisor():
         if action == "4":
             searchRecord('client')
         if action == "x":
-        
-            from currentuser import currentUserName
-            currentUserName === "Not logged in"
+            logAction("Logged out", "", "No")
+            import currentuser
+            currentuser.currentUserName = "Not logged in"
 
     
 
@@ -187,6 +187,8 @@ class SuperAdmin(SystemAdmin):
             showSus()
             
         if action == "x":
-            from currentuser import currentUserName
-            currentUserName = "Not logged in"
+            logAction("Logged out", "", "No")
+            import currentuser
+            currentuser.currentUserName = "Not logged in"
+
             

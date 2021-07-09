@@ -163,7 +163,7 @@ def AuthenticateLogin(un, pw, logintype):
         return "systemadmin"
     
     else:
-        if not (username == "superadmin" and password == "Admin!23"):
+        if not (un == "superadmin" and pw == "Admin!23"):
             return ""
         return "superadmin"
         
