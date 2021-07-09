@@ -31,29 +31,6 @@ connection.commit()
 cities = ["Rotterdam", "Amsterdam", "Den Haag", "Eindhoven","Maastricht","Delft","Breda","Haarlem","Utrecht","Leiden"]
 
 
-def registerUser():
-    print("\n" * 30)
-    registerType = ""
-    while registerType == "":
-        print("\nWhat type of user do you want to register?")
-        print("Enter 1 to register a client")
-        print("Enter 2 to register an advisor")
-        print("Enter 3 to register a system administrator")
-        print("Enter 'x' to go back")
-        registerType = input("Register type: ")
-        print("\n" * 30)
-        if(registerType == "1"):
-            registerClient()
-        elif (registerType == "2"):
-            registerAdvisor()
-        elif (registerType == "3"):
-            registerSystemAdmin()
-        elif (registerType == "x"):
-            break
-        else:
-            registerType = ""
-            print("Wrong input, enter one of the 4 inputs below")
-
 
 def registerClient():
     def addClientToDb(fn,ad,ea,mp):
@@ -329,7 +306,13 @@ def getColumns(tableName,allusers):
 def getRecordInfo(table,idarg):
     cursor.execute(f"SELECT * FROM {table} WHERE id=:id",{"id":idarg})
     results = cursor.fetchall()
+    if str.isdigit(idarg):
+        logAction(f"User searched for record in {table} table", f"User input for client's id: {idarg}", "No")
+    else:
+        logAction(f"User searched for record in {table} table", f"User input for client's id: {idarg}", "Yes")
     return results
+
+
 
 
 def getUser(username, password, logintypeArg):

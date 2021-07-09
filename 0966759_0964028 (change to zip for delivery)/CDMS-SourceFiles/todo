@@ -43,11 +43,21 @@ Log:
     - advisor
     ++ update password
     ++ add client
-    -- mod client
-    -- search for client
+    ++ mod client
+    ++ search for client
     ++ log out
 
     - sysad
+    -- del client
+    -- list all users
+    -- register advisor
+    -- mod advisor
+    -- del advisor
+    -- reset advisor pass
+    -- backup
+    -- show logs
+    -- show suspicious
+    
     - superad
 
 - Flag suspicious activities:
