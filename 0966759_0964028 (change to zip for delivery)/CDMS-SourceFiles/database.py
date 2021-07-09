@@ -57,19 +57,20 @@ def registerClient():
     print("Client '{}' has been added to the database".format(name))
     input("Enter any key to continue\n")
 
+def registerUser(usertype):
+    table = decideTable(usertype)
 
-def registerAdvisor():
-    def addAdvisorToDb(un,pw,fn,ln,dt):
+    def addToDb(table,un,pw,fn,ln,dt):
         sqlargs = (un,pw,fn,ln,dt)
-        sql = "INSERT INTO advisors (Username, Password, First_Name, Last_Name, Registered_Date) VALUES (?,?,?,?,?)"
+        sql = f"INSERT INTO {table} (Username, Password, First_Name, Last_Name, Registered_Date) VALUES (?,?,?,?,?)"
         cursor.execute(sql,sqlargs)
         connection.commit()
-        logAction("Advisor has been added to the database", f"Inputs: {sqlargs}", "No")
+        logAction(f"User has been added to the {table} table", f"Inputs: {sqlargs}", "No")
 
     usernameOK = False
     while not usernameOK:
-        print("\nRegistering an advisor. Enter 'q' to quit OR")
-        uname = input("\n1. Enter the username of the new advisor: ")
+        print(f"\nRegistering an {usertype}. Enter 'q' to quit OR")
+        uname = input(f"\n1. Enter the username of the new {usertype}: ")
         if uname == 'q':
             return
         if userNameTaken(uname):
@@ -77,48 +78,15 @@ def registerAdvisor():
         else:
             usernameOK = True
 
-    psswd            = input("\n2. Enter the password for the new advisor: ")
-    fname            = input("\n3. Enter the first name of the new advisor: ")
-    lname            = input("\n4. Enter the last name of the new advisor: ")
+    psswd            = input(f"\n2. Enter the password for the new {usertype}: ")
+    fname            = input(f"\n3. Enter the first name of the new {usertype}: ")
+    lname            = input(f"\n4. Enter the last name of the new {usertype}: ")
     from datetime import date
     date = str(date.today())
-    addAdvisorToDb(uname,psswd,fname,lname,date)
+    addToDb(table,uname,psswd,fname,lname,date)
     print("\n"+ "="*40)
-    print("Advisor '" + uname + "' has been registered on " + date)
+    print(f"{usertype} '" + uname + "' has been registered on " + date)
     input("Enter any key to continue\n")
-
-
-
-
-def registerSystemAdmin():
-    def addSystemAdminToDb(un,pw,fn,ln,dt):
-        sqlargs = (un,pw,fn,ln,dt)
-        sql = "INSERT INTO sysadmins (Username, Password, First_Name, Last_Name, Registered_Date) VALUES (?,?,?,?,?)"
-        cursor.execute(sql,sqlargs)
-        connection.commit()
-        logAction("System admin has been added to the database", f"Inputs: {sqlargs}", "No")
-   
-    usernameOK = False
-    while not usernameOK:
-        print("Registering an system admin. Enter 'q' to quit OR")
-        uname = input("\n1. Enter the username of the new system admin: ")
-        if uname == 'q':
-            return
-        if userNameTaken(uname):
-            print("\n" * 30)
-            print("Username: '{}' is already taken. Try something else".format((uname)))
-        else:
-            print("-  Username '{}' is available".format(uname))
-            usernameOK = True
-
-    psswd            = input("\n2. Enter the password for the new system admin: ")
-    fname            = input("\n3. Enter the first name of the new system admin: ")
-    lname            = input("\n4. Enter the last name of the new system admin: ")
-    from datetime import date
-    date = str(date.today())
-    addSystemAdminToDb(uname,psswd,fname,lname,date)
-    print("\nSystem admin " + uname + " has been registered on " + date)
-    input("Enter any key to continue ")
 
 
 #--------------------------------------------------------------------------------------------------------------------------------
@@ -364,7 +332,17 @@ Enter 'x' to exit\n\n")
             print(f"{usertype} info: " + str(info[0]))
             print("="*80)
 
-            columnName = input("Enter the name of the column that you want to modify: ")
+            columnList = []
+            while True:
+                columnName = input("Enter the name of the column that you want to modify: ")
+                cursor.execute("PRAGMA table_info({})".format(table))
+                tableInfo = cursor.fetchall()
+                for row in tableInfo:
+                    columnList.append(row[1])
+                if columnName in columnList:
+                    break
+                print("Column doesn't exist")
+        
             newInfo = input("Enter the new info ")
             updateInfo(columnName,table,newInfo,uid)
             input("Enter any key to continue\n")
@@ -374,6 +352,8 @@ def updateInfo(columnName,table,newInfo,uid):
     args = (newInfo,uid)
     cursor.execute(sql,args)
     connection.commit()
+    if columnName == "Password":
+        newInfo = len(newInfo) *  "*"
     logAction(f"Info in {table} table updated", f"Column {columnName} at id: {uid} changed to {newInfo}", "No")
     print("Update successful")
 
@@ -416,11 +396,14 @@ def deleteRecord(usertype):
         if info == []:
             print("\n" * 40)
             print(f"{usertype} with id '{uid}' doesn't exist\n")
+            if not str.isdigit(uid):
+                logAction(f"Attempt to delete: {usertype}",f"Input:{uid}","Yes")
         else:
             cursor.execute(f"DELETE FROM {table} WHERE id=:id",{"id":uid})
             connection.commit()
             print("\n" * 40)
             print(f"{uid} '{info[0][1]}' with id:{info[0][0]} has been deleted\n")
+            logAction(f"{usertype} deleted", f"'{info[0][1]}' with id:{info[0][0]} has been deleted", "No")
             return
 
     print("\n" * 30 + f"\nSo you want to delete a {usertype} huh?\nThen you've come to the right place\n")
@@ -468,6 +451,7 @@ def listAllUsers():
     for sysadmin in sysadmins:
         print(sysadmin)
     print("="*80)
+    logAction("Listed all employees", "", "No")
     input("Enter any key to exit\n")
    
 

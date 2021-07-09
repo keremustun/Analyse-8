@@ -71,7 +71,7 @@ class SystemAdmin(Advisor):
         if action == "6":
             listAllUsers()
         if action == "7":
-            registerAdvisor()
+            registerUser("advisor")
         if action == "8":
             modRecord("advisor")
         if action == "9":
@@ -160,7 +160,7 @@ class SuperAdmin(SystemAdmin):
         if action == "5":
             listAllUsers()
         if action == "6":
-            registerAdvisor()
+            registerUser("advisor")
         if action == "7":
             modRecord('advisor')
         if action == "8":
@@ -172,7 +172,7 @@ class SuperAdmin(SystemAdmin):
         if action == "11":
             show_log()
         if action == "12":
-            registerSystemAdmin()
+            registerUser("system admin")
         if action == "13":
             modRecord("system admin")
         if action == "14":

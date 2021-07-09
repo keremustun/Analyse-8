@@ -48,17 +48,22 @@ Log:
     ++ log out
 
     - sysad
-    -- del client
-    -- list all users
-    -- register advisor
-    -- mod advisor
+    ++ del client
+    ++ list all users
+    ++ register advisor
+    ++ mod advisor
     -- del advisor
     -- reset advisor pass
     -- backup
     -- show logs
     -- show suspicious
-    
+
     - superad
+    ++ add sysad
+    -- mod sysad
+    -- del sysad
+    -- reset sysad pass
+
 
 - Flag suspicious activities:
     - Input other than predefined Input
