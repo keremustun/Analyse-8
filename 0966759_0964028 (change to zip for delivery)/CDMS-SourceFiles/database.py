@@ -623,3 +623,25 @@ def Decrypt (text):
     return result
 
 
+def Backup():
+    def progress(status, remaining, total):
+        print(f"Copied {total-remaining} of {total} pages...")
+
+    
+    logAction("Backup created", "", "No")
+    dest = sqlite3.connect('backup.db')
+    with dest:
+        connection.backup(dest, pages=1, progress=progress)
+    
+    dest.close()
+
+    import zipfile,os
+    if os.path.exists('backup.zip'):
+        os.remove('backup.zip')
+
+    backup = zipfile.ZipFile('backup.zip','a') 
+    backup.write('backup.db')
+    backup.close()
+
+    os.remove('backup.db')
+    

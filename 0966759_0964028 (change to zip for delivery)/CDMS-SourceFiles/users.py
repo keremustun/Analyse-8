@@ -79,7 +79,7 @@ class SystemAdmin(Advisor):
         if action == "10":
             resetPassword("1")
         if action == "11":
-            print("x")
+            Backup()
         if action == "12":
             show_log()
         if action == "sus":
@@ -168,7 +168,7 @@ class SuperAdmin(SystemAdmin):
         if action == "9":
             resetPassword("1")
         if action == "10":
-            print("x") 
+            Backup()
         if action == "11":
             show_log()
         if action == "12":

@@ -5,7 +5,6 @@
 
 ALWAYS TODO: ALL SQL EXECUTIONS MUST BE SQL INJECTION SAFE, SO EVERY TIME YOU PASS DATA, USE A PREPARED STATEMENT
 
-change super admin loginpassed
 ##################################################################################################################
 
 Menu:
@@ -23,11 +22,11 @@ Menu:
     + mod Advisor
     + del Advisor
     + reset Advisor password (temp pass)
-    - backup System
+    + backup System
     + see log
     
 - Super Admin (main use is to define sys admins)
-    - everything an sysadmin can do
+    + everything an sysadmin can do
     + add sysad
     + mod sysad
     + del sysad
@@ -39,26 +38,26 @@ Menu:
 
 #######################################################################################################
 Log:
-- Log all activities
-    - advisor
++ Log all activities
+    + advisor
     ++ update password
     ++ add client
     ++ mod client
     ++ search for client
     ++ log out
 
-    - sysad
+    + sysad
     ++ del client
     ++ list all users
     ++ register advisor
     ++ mod advisor
     ++ del advisor
     ++ reset advisor pass
-    -- backup
+    ++ backup
     ++ show logs
     ++ show suspicious
 
-    - superad
+    + superad
     ++ add sysad
     ++ mod sysad
     ++ del sysad
@@ -81,11 +80,7 @@ Encryption with Caesar cypher or vigenere cypher:
 - Email
 - Log
 
-Backup in zip format:
-- database
--- employee info
--- client info
-- log
++ Backup in zip format
 
 
 
@@ -104,8 +99,8 @@ Password:
 -   must have a combination of at least one lowercase letter, one uppercase letter, one digit, and one special character
 
 ##################################################################################################################
-C1, Authentication & Authorization      [in progress]:
+C1, Authentication & Authorization      [done]: 
 C2, Input validation                    [in progress]:
-C3, SQL Injection                       [in progress]:
+C3, SQL Injection                       [done]: 
 C4, Invalid inputs                      [in progress]:
-C5, Log & Backup                        [not started]:
+C5, Log & Backup                        [in progress]:
