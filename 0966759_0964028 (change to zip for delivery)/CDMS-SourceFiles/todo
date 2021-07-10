@@ -23,11 +23,11 @@ Menu:
     + mod Advisor
     + del Advisor
     + reset Advisor password (temp pass)
-    - backup System
+    + backup System
     + see log
     
 - Super Admin (main use is to define sys admins)
-    - everything an sysadmin can do
+    + everything an sysadmin can do
     + add sysad
     + mod sysad
     + del sysad
@@ -39,26 +39,26 @@ Menu:
 
 #######################################################################################################
 Log:
-- Log all activities
-    - advisor
++ Log all activities
+    + advisor
     ++ update password
     ++ add client
     ++ mod client
     ++ search for client
     ++ log out
 
-    - sysad
+    + sysad
     ++ del client
     ++ list all users
     ++ register advisor
     ++ mod advisor
     ++ del advisor
     ++ reset advisor pass
-    -- backup
+    ++ backup
     ++ show logs
     ++ show suspicious
 
-    - superad
+    + superad
     ++ add sysad
     ++ mod sysad
     ++ del sysad
