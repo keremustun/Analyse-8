@@ -28,7 +28,7 @@ cursor.execute(createTableUnreadSuspicous)
 connection.commit()
 #=========================================================================================================   Register  =====================================
 
-cities = ["Rotterdam", "Amsterdam", "Den Haag", "Eindhoven","Maastricht","Delft","Breda","Haarlem","Utrecht","Leiden"]
+cities = ["Rotterdam", "Amsterdam", "Amersfoort", "Eindhoven","Maastricht","Delft","Breda","Haarlem","Utrecht","Leiden"]
 
 
 
@@ -44,10 +44,22 @@ def registerClient():
     print(                  "\n2. Entering the address...")
     streetName      = input("2.1. Street name: ")
     zipCode         = input("2.2. Zipcode: ")
-    print(                  "2.3. City: (Choose one from the list below) ")
-    for city in cities:
-        print("- " + city )
-    city            = input("\nCity: ")
+    
+    city = ""
+    while True:
+        print(              "2.3. City: (Choose one from the list below) ")
+        for city in cities:
+            print("- " + city )
+        city            = input("\nCity: ")
+
+        if city in cities:
+            break
+        print("The city name that you've entered is not in the list of cities.")
+        sus = "No"
+        if not city.isalpha():
+            sus = "Yes"
+        logAction("Input not in list of cities", f"Input: {city}", sus)
+
     address = streetName + ", " + zipCode + ", " + city
     email           = input("\n3. Email address: ")
     mobile          = input("\n4. Mobile: ")

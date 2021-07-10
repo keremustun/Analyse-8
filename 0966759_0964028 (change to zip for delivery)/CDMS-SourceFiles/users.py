@@ -30,7 +30,8 @@ class Advisor():
     @staticmethod
     def menuActions(action,logintypeArg):
         if action == "1":
-            changePassword(self.UserName,logintypeArg)
+            from currentuser import currentUserName
+            changePassword(currentUserName,logintypeArg)
         if action == "2":
             registerClient()    
         if action == "3":
