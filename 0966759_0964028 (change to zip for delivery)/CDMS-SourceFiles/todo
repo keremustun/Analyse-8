@@ -22,29 +22,56 @@ Menu:
     + add Advisor
     + mod Advisor
     + del Advisor
-    - reset Advisor password (temp pass)
+    + reset Advisor password (temp pass)
     - backup System
-    - see log
+    + see log
     
 - Super Admin (main use is to define sys admins)
     - everything an sysadmin can do
     + add sysad
     + mod sysad
     + del sysad
-    - reset sysad pass (temp pass)
+    + reset sysad pass (temp pass)
 
 
 
 
 
 #######################################################################################################
-Log (check what kind of file log should be):
+Log:
 - Log all activities
+    - advisor
+    ++ update password
+    ++ add client
+    ++ mod client
+    ++ search for client
+    ++ log out
+
+    - sysad
+    ++ del client
+    ++ list all users
+    ++ register advisor
+    ++ mod advisor
+    ++ del advisor
+    ++ reset advisor pass
+    -- backup
+    ++ show logs
+    ++ show suspicious
+
+    - superad
+    ++ add sysad
+    ++ mod sysad
+    ++ del sysad
+    ++ reset sysad pass
+
+    
+
+
 - Flag suspicious activities:
     - Input other than predefined Input
     - ...
 - encrypted and only readable through the UI, by an admin
-- Produce alert to admin for unread suspicous activities
++ Produce alert to admin for unread suspicous activities
 
 Encryption with Caesar cypher or vigenere cypher:
 - Usernames

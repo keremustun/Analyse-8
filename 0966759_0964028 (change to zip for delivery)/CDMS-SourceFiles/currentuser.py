@@ -1,0 +1,1 @@
+currentUserName = "Not logged in"
