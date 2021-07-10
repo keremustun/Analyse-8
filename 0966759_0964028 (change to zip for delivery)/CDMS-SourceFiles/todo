@@ -52,17 +52,19 @@ Log:
     ++ list all users
     ++ register advisor
     ++ mod advisor
-    -- del advisor
-    -- reset advisor pass
+    ++ del advisor
+    ++ reset advisor pass
     -- backup
-    -- show logs
-    -- show suspicious
+    ++ show logs
+    ++ show suspicious
 
     - superad
     ++ add sysad
-    -- mod sysad
-    -- del sysad
-    -- reset sysad pass
+    ++ mod sysad
+    ++ del sysad
+    ++ reset sysad pass
+
+    
 
 
 - Flag suspicious activities:

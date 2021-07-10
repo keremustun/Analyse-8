@@ -214,6 +214,7 @@ def resetPassword(logintypeArg):
                 confirmNewPass = input("Enter the new password again for confirmation: ")
                 if newPass == confirmNewPass:
                     updatePassword(newPass, choice, logintypeArg)
+                    logAction(f"{usertype} password updated", f"{choice}'s password has been updated", "No")
                     print("Password has been succesfully updated!")
                     return
                 else:
@@ -227,13 +228,22 @@ def showSus():
         for row in rows:
             print(row)
         print("=" * 70)
-        
+        logAction("Display suspicious activites", "", "No")
+
         choicedesc = "Enter the id of suspicious activity to mark it as read\nOR\nEnter'x' to exit\n\n"
         choice = input(choicedesc)
         if choice != 'x':
-            cursor.execute(f"DELETE FROM unreadsuslogs WHERE susID=:id",{"id":choice})
-            connection.commit()
-            print("\n" * 40)
+            if not str.isdigit(choice):
+                logAction("Attempt to mark suspicious activity as read", f"id input: {choice}", "Yes")
+                return
+            else:
+                cursor.execute("SELECT * FROM unreadsuslogs WHERE susID=:id",{"id":choice})
+                susdesc = cursor.fetchall()
+
+                cursor.execute(f"DELETE FROM unreadsuslogs WHERE susID=:id",{"id":choice})
+                connection.commit()
+                logAction("Suspicious activity marked as read", f"Suspicious activity info: {susdesc}", "No")
+                print("\n" * 40)
             return
 
 
@@ -494,6 +504,7 @@ def show_log():
     for row in rows:
         print(row)
     print("="* 100)
+    logAction("Displayed logs", "", "No")
     input("\nEnter any key to continue ")
 
 
