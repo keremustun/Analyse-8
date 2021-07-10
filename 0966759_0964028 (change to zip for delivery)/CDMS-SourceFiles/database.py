@@ -1,4 +1,6 @@
 import sqlite3
+import re
+import sys
 
 connection = sqlite3.connect('CDMS.db')
 cursor = connection.cursor()
@@ -28,7 +30,7 @@ cursor.execute(createTableUnreadSuspicous)
 connection.commit()
 #=========================================================================================================   Register  =====================================
 
-cities = ["Rotterdam", "Amsterdam", "Den Haag", "Eindhoven","Maastricht","Delft","Breda","Haarlem","Utrecht","Leiden"]
+
 
 
 
@@ -40,17 +42,30 @@ def registerClient():
         connection.commit()
         logAction("Client has been added to the database", f"Inputs: {sqlargs}", "No")
 
-    name            = input("\n1. Enter the name of the new client: ")
-    print(                  "\n2. Entering the address...")
-    streetName      = input("2.1. Street name: ")
-    zipCode         = input("2.2. Zipcode: ")
-    print(                  "2.3. City: (Choose one from the list below) ")
+    cities = ["Rotterdam", "Amsterdam", "Den Haag", "Eindhoven","Maastricht","Delft","Breda","Haarlem","Utrecht","Leiden"]
+
+    name            = ValidateName(input(      "\n1. Enter the full name of the new client: "))
+    print(                                     "\n2. Entering the address...")
+    streetName      = ValidateStreetName(input("2.1. Street name: "))
+    houseNumber     = ValidateHouseNumber(input(    "2.2. Houser Number: "))
+    zipCode         = ValidateZipCode(input(   "2.3. Zipcode: "))
+    print(                                     "2.4. City: (Choose one from the list below) ")
+
     for city in cities:
         print("- " + city )
-    city            = input("\nCity: ")
-    address = streetName + ", " + zipCode + ", " + city
-    email           = input("\n3. Email address: ")
-    mobile          = input("\n4. Mobile: ")
+    city = ValidateCity (input("\nCity: "), cities)
+    
+    address = f"{streetName} {houseNumber}, {zipCode}, {city}"
+    email  = ValidateEmail (input("\n3. Email address: "))
+    mobile =ValidatePhoneNumber (input("\n4. Mobile: +31-6-"))
+
+    if name == None or streetName == None or houseNumber == None or zipCode == None or city == None or address == None or email == None or mobile == None :
+        print("Something Wrong happened")
+        sys.exit()
+    
+    if name == "" or streetName == "" or houseNumber == "" or zipCode == "" or city == "" or address == "" or email == "" or mobile == "" :
+        print("Something Wrong happened")
+        sys.exit()
 
     addClientToDb(name,address,email,mobile)
     print("\n"+ "="*40)
@@ -541,4 +556,70 @@ def drop_table():
 
 #injection unprevented
 #cursor.execute("SELECT * FROM clients WHERE Full_Name='{}'".format(bob))
+
+
+def ValidateName (name):
+    while not re.match('^([a-zA-Z]{1,40})+\ +([a-zA-Z]{1,40})+$', name):
+        name = input("Please enter a valid full name (Firstname and lastname with a space between them): ")
+    return name
+
+def ValidateStreetName (streetname):
+    while not re.match('^([a-zA-Z]{1,50})+$', streetname.replace(" ","")): 
+        streetname = input("Please enter a valid street name: ")
+    return streetname
+
+def ValidateHouseNumber (housenumber):
+    while not re.match('^([a-zA-Z0-9]{1,20})+$', housenumber):
+        housenumber = input("Please enter a valid house number: ")
+    return housenumber
+
+def ValidateZipCode (zipcode):
+    while not re.match("^[0-9]{4}([a-zA-Z]{2})$", zipcode):
+        zipcode = input("Please enter a valid zipcode (zipcode should be 4 numbers and 2 letters with no space): ")
+    return zipcode
+
+def ValidateEmail (email):
+    while not re.match('^([A-Za-z0-9._%+-]{2,40})+@([A-Za-z0-9.-]{2,20})+\.[A-Z|a-z]{2,}$', email):  
+        email = input("Please enter a valid email address: ")
+    return email
+
+def ValidatePhoneNumber (mobile):
+    while not re.match('^[0-9]{8}$', mobile):  
+       mobile = input("Please enter a valid phone number: +31-6-")
+    return mobile
+    
+def ValidateCity (city, cities):
+    while city not in cities:
+        print ("Please choose one from the list below:")
+        for city in cities:
+            print("- " + city )
+        city = input("\nCity: ")
+    return city
+
+
+def Encrypt(text):
+    result = ""
+    shift = 5
+    alpha = "abcdefghijklmnopqrstuvwxyz"
+    for char in text:
+        if char in alpha:
+            index = (alpha.find(char) + shift) % len(alpha)
+            result += alpha[index]
+        else:
+            result += char
+    return result
+
+
+def Decrypt (text):
+    result = ""
+    shift = 5
+    alpha = "abcdefghijklmnopqrstuvwxyz"
+    for char in text:
+        if char in alpha:
+            index = (alpha.find(char) - shift) % len(alpha)
+            result += alpha[index]
+        else:
+            result += char
+    return result
+
 
