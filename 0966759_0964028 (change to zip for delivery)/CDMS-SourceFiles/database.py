@@ -47,7 +47,7 @@ def registerClient():
     name            = ValidateName(input(      "\n1. Enter the full name of the new client: "))
     print(                                     "\n2. Entering the address...")
     streetName      = ValidateStreetName(input("2.1. Street name: "))
-    houseNumber     = ValidateHouseNumber(input(    "2.2. Houser Number: "))
+    houseNumber     = ValidateHouseNumber(input(    "2.2. House Number: "))
     zipCode         = ValidateZipCode(input(   "2.3. Zipcode: "))
     print(                                     "2.4. City: (Choose one from the list below) ")
 
@@ -330,47 +330,59 @@ def decideTable(usertype):
 
 def modRecord(usertype):
     table = decideTable(usertype)
-
-    #DONT CHANGE THE INDENTATION HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    uid = input(f"Enter the id of the {usertype} who's info you want to update\n\
+    
+    
+    uidlambda = lambda : input(f"\nEnter the id of the {usertype} who's info you want to update\n\
 Or\n\
 Enter 'list' to show the list of all {usertype}s and their id's\n\
 Or\n\
 Enter 'x' to exit\n\n")
 
-    if uid == 'x':
-      return
-    elif uid == 'list':
-        rows = showAllFromTable(table)
-        getColumns(table,False)
-        for row in rows:
-            print(row)
-        print("="*80)
-        input("Enter any key to continue")
-    else:
-        info = getRecordInfo(table, uid)
-        if info == []:
-            print(f"{usertype} doesn't exist")
-        else:
-            print("\n" * 40)
-            getColumns(table,False)
-            print(f"{usertype} info: " + str(info[0]))
-            print("="*80)
-
-            columnList = []
-            while True:
-                columnName = input("Enter the name of the column that you want to modify: ")
-                cursor.execute("PRAGMA table_info({})".format(table))
-                tableInfo = cursor.fetchall()
-                for row in tableInfo:
-                    columnList.append(row[1])
-                if columnName in columnList:
-                    break
-                print("Column doesn't exist")
+    uid = uidlambda()
+    while uid != 'x':
+        #DONT CHANGE THE INDENTATION HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         
-            newInfo = input("Enter the new info ")
-            updateInfo(columnName,table,newInfo,uid)
-            input("Enter any key to continue\n")
+        if uid == 'x':
+            return
+        elif uid == 'list':
+            rows = showAllFromTable(table)
+            getColumns(table,False)
+            for row in rows:
+                print(row)
+            print("="*80)
+            uid = input(f"Enter the id of the {usertype} to delete OR enter 'x' to exit: ")
+        else:
+            info = getRecordInfo(table, uid)
+            if info == []:
+                print(f"{usertype} doesn't exist")
+                uid = uidlambda()
+            else:
+                print("\n" * 40)
+                getColumns(table,False)
+                print(f"{usertype} info: " + str(info[0]))
+                print("="*80)
+
+                columnList = []
+                while True:
+                    columnName = input("Enter the name of the column that you want to modify: ")
+                    cursor.execute("PRAGMA table_info({})".format(table))
+                    tableInfo = cursor.fetchall()
+                    for row in tableInfo:
+                        columnList.append(row[1])
+                    if columnName in columnList:
+                        break
+                    print("Column doesn't exist")
+            
+                newInfo = input("Enter the new info ")
+                updateInfo(columnName,table,newInfo,uid)
+                input("Enter any key to continue\n")
+                break
+
+      
+
+            
+                
+
 
 def updateInfo(columnName,table,newInfo,uid):
     sql = f"UPDATE {table} SET {columnName} = ? WHERE id = ?"
@@ -401,7 +413,7 @@ Enter 'x' to exit\n\n")
         for row in rows:
             print(row)
         print("="*80)
-        input("Enter any key to continue")
+        input("Enter any key to continue ")
     else:
         info = getRecordInfo(table, uid)
         if info == []:
@@ -411,7 +423,7 @@ Enter 'x' to exit\n\n")
             getColumns(table,False)
             print(f"{usertype} info: " + str(info[0]))
             print("="*80)
-            input("Enter any key to continue")
+            input("Enter any key to continue ")
 
 
 def deleteRecord(usertype):
@@ -452,7 +464,7 @@ Choice: ")
                 print(row)
             print("="*80)
             uid = input(f"Enter the id of the {usertype} to delete OR enter 'x' to exit: ")
-            if uid != 'list':
+            if uid != 'x':
                 deleteRecord2(usertype, table, uid)
                 
         else:
@@ -533,29 +545,6 @@ def drop_table():
     name = input("drop table. tablename: ")
     cursor.execute("DROP TABLE {}".format(name))
     connection.commit()
-    
-#FOREIGN KEY(store_id) REFERENCES stores(store_id)) (reminder on how to do foreign keys)
-
-#--------------INSERT INTO CLIENT
-# cursor.execute("INSERT INTO clients (Full_Name, Address, Email_Address, Mobile_Phone)\
-#                             VALUES  ('Bob','Afri','Afri@gmail.com','124142142' )")
-# cursor.execute("INSERT INTO clients (Full_Name, Address, Email_Address, Mobile_Phone)\
-#                             VALUES  ('Boasdb','Afasdri','Afriasdgmail.com','124142asd142' )")
-
-# cursor.execute("UPDATE purchases SET total_cost = 3.67 WHERE purchase_id = 2")
-# cursor.execute("DELETE FROM purchases WHERE purchase_id = 3")
-
-# sqlinjection="Bob' OR 'a' = 'a' --"
-
-# #injection prevented
-
-#cursor.execute("SELECT * FROM clients WHERE id=:id",{"id":fn})
-#cursor.execute("SELECT * FROM clients WHERE Full_Name='{}'".format(fn))
-
-# cursor.execute("SELECT * FROM clients WHERE Full_Name=:username",{"username":bob})
-
-#injection unprevented
-#cursor.execute("SELECT * FROM clients WHERE Full_Name='{}'".format(bob))
 
 
 def ValidateName (name):
@@ -586,7 +575,7 @@ def ValidateEmail (email):
 def ValidatePhoneNumber (mobile):
     while not re.match('^[0-9]{8}$', mobile):  
        mobile = input("Please enter a valid phone number: +31-6-")
-    return mobile
+    return "+31-6-" + mobile
     
 def ValidateCity (city, cities):
     while city not in cities:
