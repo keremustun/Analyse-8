@@ -1,47 +1,25 @@
-shift = 3
 
-text = "Hoi"
 
-encText = ""
-decText = ""
+def cipher_wlookup(text, key, encrypt):
+    import string
+    characters = string.ascii_letters + string.digits + " " + string.punctuation
+    print("Extended character set: " + characters)
+    if key < 0:
+        print("Key cannot be negative")
+        return None
+    
+    n = len(characters)
 
-for c in text:
-    #check for upper
-    if c.isupper():
-        c_unicode = ord(c)
-        c_index = ord(c) - ord("A")
+    if not encrypt:
+        key = n - key
 
-        #perform shift
-        new_index = (c_index + shift) % 26
+    table = str.maketrans(characters, characters[key:]+characters[:key])
 
-        #convert to new char
-        new_unicode = new_index + ord("A")
+    translated_text = text.translate(table)
+    return translated_text
 
-        new_char = chr(new_unicode)
-
-        #append to encrypted string
-        encText += new_char
-
-    else:
-        encText += c
-
-print("Plain text: ",text)
-print("Enc text: ", encText)
-
-for c in encText:
-    if c.isupper():
-        c_unicode = ord(c)
-        c_index = ord(c) - ord("A")
-
-        new_index = (c_index - shift) % 26
-
-        new_unicode = new_index + ord("A")
-
-        new_char = chr(new_unicode)
-
-        decText += new_char
-
-    else:
-        decText += c
-
-print(decText)
+plain_text = "My name is Dave Adams. I am living on the 99th street. Please send the supplies!"
+x = cipher_wlookup(plain_text, 15, True)
+print(x)
+z = cipher_wlookup(x, 15, False)
+print(z)
