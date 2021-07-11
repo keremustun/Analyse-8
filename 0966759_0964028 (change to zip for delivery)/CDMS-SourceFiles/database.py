@@ -600,6 +600,7 @@ def ValidateCity (city, cities):
 
 
 def Encrypt(text):
+
     result = ""
     shift = 5
     for char in text:
