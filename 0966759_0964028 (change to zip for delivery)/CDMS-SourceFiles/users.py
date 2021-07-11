@@ -12,6 +12,8 @@ class Advisor():
         self.Login_Type = "1"
 
     def showMenu(self):
+        from currentuser import currentUserName
+        print (currentUserName)
         action = ''
         while action != 'x':
             self.menuOptions()

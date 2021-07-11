@@ -602,27 +602,18 @@ def ValidateCity (city, cities):
 def Encrypt(text):
     result = ""
     shift = 5
-    alpha = "abcdefghijklmnopqrstuvwxyz"
     for char in text:
-        if char in alpha:
-            index = (alpha.find(char) + shift) % len(alpha)
-            result += alpha[index]
-        else:
-            result += char
+        num = ord(char) + shift
+        result += chr(num)
     return result
 
 
 def Decrypt (text):
     result = ""
-    text = str(text)
     shift = 5
-    alpha = "abcdefghijklmnopqrstuvwxyz"
     for char in text:
-        if char in alpha:
-            index = (alpha.find(char) - shift) % len(alpha)
-            result += alpha[index]
-        else:
-            result += char
+        num = ord(char) - shift
+        result += chr(num)     
     return result
 
 
