@@ -559,7 +559,7 @@ def drop_table():
 
 
 def ValidateName (name):
-    while not re.match('^([a-zA-Z]{1,40})+\ +([a-zA-Z]{1,40})+$', name):
+    while not re.match('^([a-zA-Z\']{1,40})+\ +([a-zA-Z]{1,40})+$', name):
         name = input("Please enter a valid full name (Firstname and lastname with a space between them): ")
     return name
 
