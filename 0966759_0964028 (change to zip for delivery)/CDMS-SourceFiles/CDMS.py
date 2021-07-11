@@ -110,7 +110,6 @@ running = True
 #determining login type
 loggedout = False
 while running:
-    show_log()
     loginType = getLoginType(loggedout)
 
     #input Username and password
