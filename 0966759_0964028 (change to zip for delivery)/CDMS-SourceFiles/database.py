@@ -55,9 +55,9 @@ def registerClient():
         print("- " + city )
     city = ValidateCity (input("\nCity: "), cities)
     
-    address = f"{streetName} {houseNumber}, {zipCode}, {city}"
-    email  = ValidateEmail (input("\n3. Email address: "))
-    mobile =ValidatePhoneNumber (input("\n4. Mobile: +31-6-"))
+    address = Encrypt (f"{streetName} {houseNumber}, {zipCode}, {city}")
+    email  = Encrypt (ValidateEmail (input("\n3. Email address: ")))
+    mobile = Encrypt (ValidatePhoneNumber (input("\n4. Mobile: +31-6-")))
 
     if name == None or streetName == None or houseNumber == None or zipCode == None or city == None or address == None or email == None or mobile == None :
         print("Something Wrong happened")
@@ -76,7 +76,7 @@ def registerUser(usertype):
     table = decideTable(usertype)
 
     def addToDb(table,un,pw,fn,ln,dt):
-        sqlargs = (un,pw,fn,ln,dt)
+        sqlargs = (Encrypt(un),Encrypt(pw),Encrypt(fn),Encrypt(ln),dt)
         sql = f"INSERT INTO {table} (Username, Password, First_Name, Last_Name, Registered_Date) VALUES (?,?,?,?,?)"
         cursor.execute(sql,sqlargs)
         connection.commit()
@@ -482,13 +482,13 @@ def listAllUsers():
 
 def logAction(dc,ad,sp):
     from currentuser import currentUserName
-    username = currentUserName
+    username = Encrypt (currentUserName)
     from datetime import date, datetime
-    date = str(date.today())
-    time = str((datetime.now()).strftime("%H:%M:%S"))
-    desc = dc
-    addinfo = ad
-    sus = sp
+    date = Encrypt(str(date.today()))
+    time = Encrypt(str((datetime.now()).strftime("%H:%M:%S")))
+    desc = Encrypt (dc)
+    addinfo = Encrypt (ad)
+    sus = Encrypt (sp)
 
     sql = """INSERT INTO log (Username, Date, Time, Description_of_activity, Additional_information, Suspicious)
                       VALUES (?,?,?,?,?,?)"""
@@ -517,7 +517,9 @@ def show_log():
     rows = cursor.fetchall()
     getColumns("log", False)
     for row in rows:
-        print(row)
+        for i in row:
+            print(Decrypt (i))
+
     print("="* 100)
     logAction("Displayed logs", "", "No")
     input("\nEnter any key to continue ")
@@ -612,6 +614,7 @@ def Encrypt(text):
 
 def Decrypt (text):
     result = ""
+    text = str(text)
     shift = 5
     alpha = "abcdefghijklmnopqrstuvwxyz"
     for char in text:
