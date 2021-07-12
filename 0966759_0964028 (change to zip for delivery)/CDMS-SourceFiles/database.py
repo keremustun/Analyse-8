@@ -235,10 +235,10 @@ def resetPassword(logintypeArg):
             print("=" * 80)
             choice = input(f"\nEnter the username of the {usertype} who's password you want to reset\nOR\nEnter 'x' to exit\n\n")
         else: 
-                newPass        = input("Enter the new password: ")
+                newPass        = ValidatePassWord(input("Enter the new password: "))
                 confirmNewPass = input("Enter the new password again for confirmation: ")
                 if newPass == confirmNewPass:
-                    updatePassword(newPass, choice, logintypeArg)
+                    updatePassword(confirmNewPass, choice, logintypeArg)
                     logAction(f"{usertype} password updated", f"{choice}'s password has been updated", "No")
                     print("Password has been succesfully updated!")
                     return
@@ -402,6 +402,8 @@ Enter 'x' to exit\n\n")
         else:
             print("\n" * 40)
             getColumns(table,False)
+            if table in ["advisors","sysadmins"]:
+                info[0][2] = "*private*"
             print(f"{usertype} info: " + str(info[0]))
             print("="*120)
 
@@ -435,12 +437,23 @@ Enter 'x' to exit\n\n")
                 elif columnName == "Mobile_Phone":
                     newInfo = "+31-6-" + ValidatePhoneNumber (input("\nEnter the new phone number:"))
                 else:
-                    print(f"You cannot change column: {columnName}")
+                    print(f"You cannot modify the data in column: {columnName}")
+                    input("Enter any key to continue ")
                     return
             
             else:
-                newInfo = input("Enter the new info: ")
-
+                if columnName == "Username":
+                    newInfo = ValidateUserName (input(f"Enter the new username: "))
+                elif columnName == "Password":
+                    newInfo = ValidatePassWord(input(f"Enter the new password: "))
+                elif columnName == "First_Name":
+                    newInfo = ValidateFirstName(input(f"Enter the new first name: "))
+                elif columnName == "Last_Name":
+                    newInfo = ValidateLastName(input(f"Enter the new last name: "))
+                else:
+                    print(f"You cannot modify the data in column: {columnName}")
+                    input("Enter any key to continue ")
+                    return
 
             updateInfo(columnName,table,newInfo,uid)
             input("Enter any key to continue\n")
@@ -700,12 +713,12 @@ def ValidateCity (city, cities):
 
 def ValidateUserName (username):
     while not re.match('^([A-Za-z]{1})+([A-Za-z0-9._\'-]{4,19})$', username):  
-        username = input("Please enter a valid username (must have a length of at least 5 characters, must be no longer than 20 characters, must be started with a letter and can contain letters, numbers, (-), (_), (') and (.)): ")
+        username = input("Please enter a valid username\n- Must have a length of at least 5 characters\n- Must be no longer than 20 characters\n- Must start with a letter\n- Can contain letters, numbers, (-), (_), (') and (.))\n\nUsername:")
     return username
 
 def ValidatePassWord (password):
     while not re.match("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&/~#^+_=`|:;\'<>,.)(}{-])[A-Za-z\d@$!%*?&/~#^+_=`|:;\'<>,.)(}{-]{8,}$", password):  
-        password = input("Please enter a valid password (must have a combination of at least one lowercase letter, one uppercase letter, one digit and one special character): ")
+        password = input("Please enter a valid password\n- Must have a length of at least 8 characters\n- Must be no longer than 20 characters\n- Must have a combination of at least one lowercase letter, one uppercase letter, one digit and one special character\n\nPassword: ")
     return password 
 
 def ValidateFirstName (firstname):
