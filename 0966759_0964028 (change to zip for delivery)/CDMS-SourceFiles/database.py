@@ -95,8 +95,8 @@ def registerUser(usertype):
             usernameOK = True
 
     psswd            = ValidatePassWord (input(f"\n2. Enter the password for the new {usertype}: "))
-    fname            = input(f"\n3. Enter the first name of the new {usertype}: ")
-    lname            = input(f"\n4. Enter the last name of the new {usertype}: ")
+    fname            = ValidateFirstName (input(f"\n3. Enter the first name of the new {usertype}: "))
+    lname            = ValidateLastName (input(f"\n4. Enter the last name of the new {usertype}: "))
     from datetime import date
     date = str(date.today())
     addToDb(table,uname,psswd,fname,lname,date)
@@ -607,7 +607,17 @@ def ValidateUserName (username):
 def ValidatePassWord (password):
     while not re.match("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&/~#^+_=`|:;\'<>,.)(}{-])[A-Za-z\d@$!%*?&/~#^+_=`|:;\'<>,.)(}{-]{8,}$", password):  
         password = input("Please enter a valid password (must have a combination of at least one lowercase letter, one uppercase letter, one digit and one special character): ")
-    return password    
+    return password 
+
+def ValidateFirstName (firstname):
+    while not re.match('^([a-zA-Z\']{1,40})+$', firstname):
+        firstname = input("Please enter a valid first name: ")
+    return firstname
+
+def ValidateLastName (lastname):
+    while not re.match('^([a-zA-Z\']{1,40})+$', lastname):
+        lastname = input("Please enter a valid last name: ")
+    return lastname
 
 
 def Encrypt(text):
