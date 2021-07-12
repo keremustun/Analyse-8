@@ -641,14 +641,39 @@ def show_log():
 
 
 def empty_table():
-    name = input("delete content of table. tablename: ")
-    cursor.execute("DELETE FROM ?",name)
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+    res = cursor.fetchall()
+    tables = []
+    for i in res:
+        tables.append(i[0])
+
+    name = ""
+    while True:    
+        name = input("Empty table. Tablename: ")
+        if name in tables:
+            if name != "sqlite_sequence":
+                break
+        print("Invalid input")
+
+    cursor.execute(f"DELETE FROM {name}")
     connection.commit()
-    
 
 def drop_table():
-    name = input("drop table. tablename: ")
-    cursor.execute("DROP TABLE (?)",name)
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+    res = cursor.fetchall()
+    tables = []
+    for i in res:
+        tables.append(i[0])
+
+    name = ""
+    while True:    
+        name = input("Drop table. Tablename: ")
+        if name in tables:
+            if name != "sqlite_sequence":
+                break
+        print("Invalid input")
+
+    cursor.execute(f"DROP TABLE {name}")
     connection.commit()
     
 
