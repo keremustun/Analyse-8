@@ -738,7 +738,7 @@ def ValidateUserName (username):
     return username
 
 def ValidatePassWord (password):
-    while not re.match("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&/~#^+_=`|:;\'<>,.)(}{-])[A-Za-z\d@$!%*?&/~#^+_=`|:;\'<>,.)(}{-]{8,}$", password):  
+    while not re.match("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&/~#^+_=`|:;\'<>,.)(}{-])[A-Za-z\d@$!%*?&/~#^+_=`|:;\'<>,.)(}{-]{8,30}$", password):  
         password = input("Please enter a valid password\n- Must have a length of at least 8 characters\n- Must be no longer than 30 characters\n- Must have a combination of at least one lowercase letter, one uppercase letter, one digit and one special character\n\nPassword: ")
         logAction("Invalid password input", f"Input: {password}", "No")
     return password 
