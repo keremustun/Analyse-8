@@ -32,22 +32,22 @@ connection.commit()
 
 
 
-
+cities = ["Rotterdam", "Amsterdam", "Zwolle", "Eindhoven","Maastricht","Delft","Breda","Haarlem","Utrecht","Leiden"]
 
 def registerClient():
     def addClientToDb(fn,ad,ea,mp):
-        sqlargs = (fn,ad,ea,mp)
+        sqlargs = (Crypt(fn,5,True),Crypt(ad,5,True),Crypt(ea,5,True),Crypt(mp,5,True))
         sql = "INSERT INTO clients (Full_Name, Address, Email_Address, Mobile_Phone) VALUES (?,?,?,?)"
         cursor.execute(sql,sqlargs)
         connection.commit()
         logAction("Client has been added to the database", f"Inputs: {sqlargs}", "No")
 
-    cities = ["Rotterdam", "Amsterdam", "Den Haag", "Eindhoven","Maastricht","Delft","Breda","Haarlem","Utrecht","Leiden"]
+  
 
     name            = ValidateName(input(      "\n1. Enter the full name of the new client: "))
     print(                                     "\n2. Entering the address...")
     streetName      = ValidateStreetName(input("2.1. Street name: "))
-    houseNumber     = ValidateHouseNumber(input(    "2.2. Houser Number: "))
+    houseNumber     = ValidateHouseNumber(input(    "2.2. House Number: "))
     zipCode         = ValidateZipCode(input(   "2.3. Zipcode: "))
     print(                                     "2.4. City: (Choose one from the list below) ")
 
@@ -55,9 +55,9 @@ def registerClient():
         print("- " + city )
     city = ValidateCity (input("\nCity: "), cities)
     
-    address = Encrypt (f"{streetName} {houseNumber}, {zipCode}, {city}")
-    email  = Encrypt (ValidateEmail (input("\n3. Email address: ")))
-    mobile = Encrypt (ValidatePhoneNumber (input("\n4. Mobile: +31-6-")))
+    address = f"({streetName} {houseNumber}, {zipCode}, {city})"
+    email  = ValidateEmail (input("\n3. Email address: "))
+    mobile = "+31-6-" + ValidatePhoneNumber (input("\n4. Mobile: +31-6-"))
 
     if name == None or streetName == None or houseNumber == None or zipCode == None or city == None or address == None or email == None or mobile == None :
         print("Something Wrong happened")
@@ -76,7 +76,7 @@ def registerUser(usertype):
     table = decideTable(usertype)
 
     def addToDb(table,un,pw,fn,ln,dt):
-        sqlargs = (Encrypt(un),Encrypt(pw),Encrypt(fn),Encrypt(ln),dt)
+        sqlargs = (Crypt(un,5,True),Crypt(pw,5,True),Crypt(fn,5,True),Crypt(ln,5,True),Crypt(dt,5,True))
         sql = f"INSERT INTO {table} (Username, Password, First_Name, Last_Name, Registered_Date) VALUES (?,?,?,?,?)"
         cursor.execute(sql,sqlargs)
         connection.commit()
@@ -108,6 +108,14 @@ def registerUser(usertype):
 # Authentication
 
 def AuthenticateLogin(un, pw, logintype):
+    if logintype == "3":
+        if not (un == "superadmin" and pw == "Admin!23"):
+            return ""
+        return "superadmin"
+
+    un = Crypt(un,5,True)
+    pw = Crypt(pw,5,True)
+
     if logintype == "1":
         cursor.execute("SELECT * FROM advisors WHERE Username=:un AND Password=:pw",{"un":un, "pw":pw})
         userExists = cursor.fetchall()
@@ -115,17 +123,14 @@ def AuthenticateLogin(un, pw, logintype):
             return ""
         return "advisor"
 
-    elif logintype == "2":
+    else:
         cursor.execute("SELECT * FROM sysadmins WHERE Username=:un AND Password=:pw",{"un":un, "pw":pw})
         userExists = cursor.fetchall()
         if (userExists) == []:
             return ""
         return "systemadmin"
     
-    else:
-        if not (un == "superadmin" and pw == "Admin!23"):
-            return ""
-        return "superadmin"
+    
         
 
 def userNameTaken(username):
@@ -143,6 +148,8 @@ def userNameTaken(username):
 # Advisor functions
 
 def authenticatePassword(pw, un, logintypeArg):
+    pw = Crypt(pw, 5, True)
+    un = Crypt(un, 5, True)
     if logintypeArg == '1':
         cursor.execute("SELECT Password FROM advisors WHERE Username=:un AND Password=:pw",{"un":un,"pw":pw})
         dbPassword = cursor.fetchall()
@@ -161,6 +168,8 @@ def authenticatePassword(pw, un, logintypeArg):
 
 
 def updatePassword(newpw, un, logintypeArg):
+        newpw = Crypt(newpw, 5, True)
+        un = Crypt(un, 5, True)
         if logintypeArg == "1":
             cursor.execute("UPDATE advisors SET Password=:pw WHERE Username=:un",{"pw":newpw,"un":un})
             connection.commit()
@@ -266,14 +275,33 @@ def showAllFromTable(tablename):
     sql = f"SELECT * FROM {tablename}"
     cursor.execute(sql)
     results = cursor.fetchall()
-    return results
+    decResults = []
+
+    if tablename in ["advisors","sysadmins"]:
+        for row in results:
+            record = []
+            for index, i in enumerate(row):
+                if index == 2:
+                    record.append("*private*")
+                else:
+                    record.append(Crypt(i, 5, False))
+            decResults.append(record)
+        return decResults
+
+    else:
+        for row in results:
+            record = []
+            for i in row:
+                record.append(Crypt(i, 5, False))
+            decResults.append(record)
+        return decResults
 
 def getColumns(tableName,allusers):
     cursor.execute("PRAGMA table_info({})".format(tableName))
     tableInfo = cursor.fetchall()
     columns = ''
     if allusers:
-        columns = "=" * 80 + "\nTable Name: All System Users\nColumns:\n"
+        columns = "=" * 120 + "\nTable Name: All System Users\nColumns:\n"
         currentColumn = 0
         allUserColumns = ['id', 'Role', 'Username']
         for column in allUserColumns:
@@ -283,7 +311,7 @@ def getColumns(tableName,allusers):
                 columns += column
             currentColumn += 1
     else:
-        columns = "=" * 80 + "\nTable Name: {}\nColumns:\n".format(tableName)
+        columns = "=" * 120 + "\nTable Name: {}\nColumns:\n".format(tableName)
         currentColumn = 0
         for column in tableInfo:
             if currentColumn != (len(tableInfo)-1):
@@ -293,17 +321,29 @@ def getColumns(tableName,allusers):
             currentColumn += 1
     print("\n"*30)
     print(columns)
-    print("-"*80)
+    print("-"*120)
 
 
 def getRecordInfo(table,idarg):
     cursor.execute(f"SELECT * FROM {table} WHERE id=:id",{"id":idarg})
     results = cursor.fetchall()
+    if results == []:
+        return []
+
     if str.isdigit(idarg):
         logAction(f"User searched for record in {table} table", f"User input for client's id: {idarg}", "No")
     else:
         logAction(f"User searched for record in {table} table", f"User input for client's id: {idarg}", "Yes")
-    return results
+    
+    
+    dec  = []
+    row = results[0]
+    for column in row:
+        dec.append(Crypt(column, 5, False))
+    
+    decResults = []
+    decResults.append(dec)
+    return decResults
 
 
 
@@ -344,8 +384,15 @@ Enter 'x' to exit\n\n")
         rows = showAllFromTable(table)
         getColumns(table,False)
         for row in rows:
-            print(row)
-        print("="*80)
+            rowText = ""
+            for index, column in enumerate(row):
+                if index < len(row) -1:
+                    rowText += column  + ", "
+                else:
+                    rowText += column
+            print(rowText + " | END OR ROW | ")
+
+        print("="*120)
         input("Enter any key to continue")
     else:
         info = getRecordInfo(table, uid)
@@ -355,7 +402,7 @@ Enter 'x' to exit\n\n")
             print("\n" * 40)
             getColumns(table,False)
             print(f"{usertype} info: " + str(info[0]))
-            print("="*80)
+            print("="*120)
 
             columnList = []
             while True:
@@ -367,14 +414,39 @@ Enter 'x' to exit\n\n")
                 if columnName in columnList:
                     break
                 print("Column doesn't exist")
-        
-            newInfo = input("Enter the new info ")
+            
+            newInfo = ""
+            if usertype == "client":
+                if columnName == "Full_Name":
+                    newInfo = ValidateName(input("Enter the new name: "))
+                elif columnName == "Address":
+                    streetName = ValidateStreetName((input("Enter the street name: ")))
+                    houseNumber = ValidateHouseNumber((input("Enter the house number: ")))
+                    zipCode = ValidateZipCode((input("Enter the zipcode: ")))
+                    print("\nChoose a city from below")
+                    for city in cities:
+                        print("- " + city )
+                    city = ValidateCity(input("\nEnter the city: "), cities)
+    
+                    newInfo = f"({streetName} {houseNumber}, {zipCode}, {city})"
+                elif columnName == "Email_Address":
+                    newInfo = ValidateEmail (input("\nEnter the new email adress: "))
+                elif columnName == "Mobile_Phone":
+                    newInfo = "+31-6-" + ValidatePhoneNumber (input("\nEnter the new phone number:"))
+                else:
+                    print(f"You cannot change column: {columnName}")
+                    return
+            
+            else:
+                newInfo = input("Enter the new info: ")
+
+
             updateInfo(columnName,table,newInfo,uid)
             input("Enter any key to continue\n")
 
 def updateInfo(columnName,table,newInfo,uid):
     sql = f"UPDATE {table} SET {columnName} = ? WHERE id = ?"
-    args = (newInfo,uid)
+    args = (Crypt(newInfo,5,True),uid)
     cursor.execute(sql,args)
     connection.commit()
     if columnName == "Password":
@@ -452,6 +524,9 @@ Choice: ")
                 print(row)
             print("="*80)
             uid = input(f"Enter the id of the {usertype} to delete OR enter 'x' to exit: ")
+            if uid == "x":
+                return
+
             if uid != 'list':
                 deleteRecord2(usertype, table, uid)
                 
@@ -464,17 +539,29 @@ def listAllUsers():
     print("\n" * 30)
     getColumns('advisors',True)
 
-    print("('SuprAdmID:0', 'Super Admin', 'superadmin' ")
+    print("'SuprAdmID:0', 'Super Admin', 'superadmin' | END OF ROW |")
     print("~"*80)
     cursor.execute("SELECT ('AdvisorID:' || id) as id , 'Advisor' as Role, Username FROM advisors")
     advisors = cursor.fetchall()
     for advisor in advisors:
-        print(advisor)
+        record = ""
+        for index, column in enumerate(advisor):
+            if index < len(advisor) - 1:
+                record += column + ", "
+            else:
+                record += Crypt(column, 5, False) + " | END OF ROW |"
+        print(record)
     print("~"*80)
     cursor.execute("SELECT ('SystAdmID:' || id) as id , 'System Admin' as Role, Username FROM sysadmins")
     sysadmins = cursor.fetchall()
     for sysadmin in sysadmins:
-        print(sysadmin)
+        record = ""
+        for index, column in enumerate(sysadmin):
+            if index < len(sysadmin) - 1:
+                record += column + ", "
+            else:
+                record += Crypt(column, 5, False) + " | END OF ROW |"
+        print(record)
     print("="*80)
     logAction("Listed all employees", "", "No")
     input("Enter any key to exit\n")
@@ -482,13 +569,20 @@ def listAllUsers():
 
 def logAction(dc,ad,sp):
     from currentuser import currentUserName
-    username = Encrypt (currentUserName)
+    username = Crypt(currentUserName,5,True)
+
     from datetime import date, datetime
-    date = Encrypt(str(date.today()))
-    time = Encrypt(str((datetime.now()).strftime("%H:%M:%S")))
-    desc = Encrypt (dc)
-    addinfo = Encrypt (ad)
-    sus = Encrypt (sp)
+    date = str(date.today())
+    date = Crypt(date,5,True)
+    
+    time = str((datetime.now()).strftime("%H:%M:%S"))
+    time = Crypt(time,5,True)
+
+    desc = Crypt(dc, 5, True)
+    if ad == "":
+        ad = "No additional information"
+    addinfo = Crypt(ad, 5, True)
+    sus = Crypt(sp, 5, True)
 
     sql = """INSERT INTO log (Username, Date, Time, Description_of_activity, Additional_information, Suspicious)
                       VALUES (?,?,?,?,?,?)"""
@@ -517,8 +611,13 @@ def show_log():
     rows = cursor.fetchall()
     getColumns("log", False)
     for row in rows:
-        for i in row:
-            print(Decrypt (i))
+        rowtext = ""
+        for index, i in enumerate(row):
+            if index < len(row) - 1:
+                rowtext += Crypt(i, 5, False) + ", "
+            else:
+                rowtext += Crypt(i, 5, False) 
+        print(rowtext + " |ROW END| ")
 
     print("="* 100)
     logAction("Displayed logs", "", "No")
@@ -599,22 +698,32 @@ def ValidateCity (city, cities):
     return city
 
 
-def Encrypt(text):
-    result = ""
-    shift = 5
-    for char in text:
-        num = ord(char) + shift
-        result += chr(num)
-    return result
+def Crypt(text, key, encrypt):
+    if isinstance(text, int):
+        return str(text)
+    import string
+    characters = string.ascii_letters + string.digits + " " + string.punctuation
+    #print("Extended character set: " + characters)
+    if key < 0:
+        print("Key cannot be negative")
+        return None
+    
+    n = len(characters)
 
+    if not encrypt:
+        key = n - key
 
-def Decrypt (text):
-    result = ""
-    shift = 5
-    for char in text:
-        num = ord(char) - shift
-        result += chr(num)     
-    return result
+    table = str.maketrans(characters, characters[key:]+characters[:key])
+
+    translated_text = text.translate(table)
+    return translated_text
+
+    # plain_text = "My name is Dave Adams. I am living on the 99th street. Please send the supplies!"
+    # x = cipher_wlookup(plain_text, 15, True)
+    # print(x)
+    # z = cipher_wlookup(x, 15, False)
+    # print(z)
+
 
 
 def Backup():
