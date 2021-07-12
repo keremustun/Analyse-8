@@ -85,7 +85,8 @@ def registerUser(usertype):
     usernameOK = False
     while not usernameOK:
         print(f"\nRegistering an {usertype}. Enter 'q' to quit OR")
-        uname = input(f"\n1. Enter the username of the new {usertype}: ")
+        uname = ValidateUserName (input(f"\n1. Enter the username of the new {usertype}: "))
+        
         if uname == 'q':
             return
         if userNameTaken(uname):
@@ -93,7 +94,7 @@ def registerUser(usertype):
         else:
             usernameOK = True
 
-    psswd            = input(f"\n2. Enter the password for the new {usertype}: ")
+    psswd            = ValidatePassWord (input(f"\n2. Enter the password for the new {usertype}: "))
     fname            = input(f"\n3. Enter the first name of the new {usertype}: ")
     lname            = input(f"\n4. Enter the last name of the new {usertype}: ")
     from datetime import date
@@ -597,6 +598,16 @@ def ValidateCity (city, cities):
             print("- " + city )
         city = input("\nCity: ")
     return city
+
+def ValidateUserName (username):
+    while not re.match('^([A-Za-z]{1})+([A-Za-z0-9._\'-]{4,19})$', username):  
+        username = input("Please enter a valid username (must have a length of at least 5 characters, must be no longer than 20 characters, must be started with a letter and can contain letters, numbers, (-), (_), (') and (.)): ")
+    return username
+
+def ValidatePassWord (password):
+    while not re.match("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&/~#^+_=`|:;\'<>,.)(}{-])[A-Za-z\d@$!%*?&/~#^+_=`|:;\'<>,.)(}{-]{8,}$", password):  
+        password = input("Please enter a valid password (must have a combination of at least one lowercase letter, one uppercase letter, one digit and one special character): ")
+    return password    
 
 
 def Encrypt(text):
