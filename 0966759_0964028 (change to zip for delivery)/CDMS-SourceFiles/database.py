@@ -11,11 +11,11 @@ clients(id INTEGER PRIMARY KEY AUTOINCREMENT, Full_Name TEXT, Address TEXT, Emai
 cursor.execute(createTableClients)
 
 createTableAdvisors = """CREATE TABLE IF NOT EXISTS
-advisors(id INTEGER PRIMARY KEY AUTOINCREMENT, Username TEXT, Password TEXT, First_Name TEXT, Last_Name TEXT, Registered_Date TEXT)"""
+advisors(id INTEGER PRIMARY KEY AUTOINCREMENT, Username TEXT COLLATE NOCASE, Password TEXT, First_Name TEXT, Last_Name TEXT, Registered_Date TEXT)"""
 cursor.execute(createTableAdvisors)
 
 createTableSystemAdmins = """CREATE TABLE IF NOT EXISTS
-sysadmins(id INTEGER PRIMARY KEY AUTOINCREMENT, Username TEXT, Password TEXT, First_Name TEXT, Last_Name TEXT, Registered_Date TEXT)"""
+sysadmins(id INTEGER PRIMARY KEY AUTOINCREMENT, Username TEXT COLLATE NOCASE, Password TEXT, First_Name TEXT, Last_Name TEXT, Registered_Date TEXT)"""
 cursor.execute(createTableSystemAdmins)
 
 
@@ -37,10 +37,11 @@ cities = ["Rotterdam", "Amsterdam", "Zwolle", "Eindhoven","Maastricht","Delft","
 def registerClient():
     def addClientToDb(fn,ad,ea,mp):
         sqlargs = (Crypt(fn,5,True),Crypt(ad,5,True),Crypt(ea,5,True),Crypt(mp,5,True))
+        sqlargsLog = (fn,ad,ea,mp)
         sql = "INSERT INTO clients (Full_Name, Address, Email_Address, Mobile_Phone) VALUES (?,?,?,?)"
         cursor.execute(sql,sqlargs)
         connection.commit()
-        logAction("Client has been added to the database", f"Inputs: {sqlargs}", "No")
+        logAction("Client has been added to the database", f"Inputs: {sqlargsLog}", "No")
 
   
 
@@ -77,18 +78,17 @@ def registerUser(usertype):
 
     def addToDb(table,un,pw,fn,ln,dt):
         sqlargs = (Crypt(un,5,True),Crypt(pw,5,True),Crypt(fn,5,True),Crypt(ln,5,True),Crypt(dt,5,True))
+        sqlargsLog = (un,pw,fn,ln,dt)
         sql = f"INSERT INTO {table} (Username, Password, First_Name, Last_Name, Registered_Date) VALUES (?,?,?,?,?)"
         cursor.execute(sql,sqlargs)
         connection.commit()
-        logAction(f"User has been added to the {table} table", f"Inputs: {sqlargs}", "No")
+        logAction(f"User has been added to the {table} table", f"Inputs: {sqlargsLog}", "No")
 
     usernameOK = False
     while not usernameOK:
-        print(f"\nRegistering an {usertype}. Enter 'q' to quit OR")
+        print(f"\nRegistering an {usertype}")
         uname = ValidateUserName (input(f"\n1. Enter the username of the new {usertype}: "))
         
-        if uname == 'q':
-            return
         if userNameTaken(uname):
             print("Username: '{}' is already taken. Try something else".format((uname)))
         else:
@@ -135,6 +135,7 @@ def AuthenticateLogin(un, pw, logintype):
         
 
 def userNameTaken(username):
+    username = Crypt(username,5,True)
     cursor.execute("SELECT * FROM advisors WHERE Username=:username",{"username":username})
     advisorUserNameInDb = cursor.fetchall()
     if advisorUserNameInDb != []:
@@ -235,10 +236,10 @@ def resetPassword(logintypeArg):
             print("=" * 80)
             choice = input(f"\nEnter the username of the {usertype} who's password you want to reset\nOR\nEnter 'x' to exit\n\n")
         else: 
-                newPass        = input("Enter the new password: ")
+                newPass        = ValidatePassWord(input("Enter the new password: "))
                 confirmNewPass = input("Enter the new password again for confirmation: ")
                 if newPass == confirmNewPass:
-                    updatePassword(newPass, choice, logintypeArg)
+                    updatePassword(confirmNewPass, choice, logintypeArg)
                     logAction(f"{usertype} password updated", f"{choice}'s password has been updated", "No")
                     print("Password has been succesfully updated!")
                     return
@@ -329,6 +330,7 @@ def getRecordInfo(table,idarg):
     cursor.execute(f"SELECT * FROM {table} WHERE id=:id",{"id":idarg})
     results = cursor.fetchall()
     if results == []:
+        logAction(f"User searched for record in {table} table", f"Nothing found, user input: {idarg}", "No")
         return []
 
     if str.isdigit(idarg):
@@ -402,6 +404,8 @@ Enter 'x' to exit\n\n")
         else:
             print("\n" * 40)
             getColumns(table,False)
+            if table in ["advisors","sysadmins"]:
+                info[0][2] = "*private*"
             print(f"{usertype} info: " + str(info[0]))
             print("="*120)
 
@@ -435,12 +439,23 @@ Enter 'x' to exit\n\n")
                 elif columnName == "Mobile_Phone":
                     newInfo = "+31-6-" + ValidatePhoneNumber (input("\nEnter the new phone number:"))
                 else:
-                    print(f"You cannot change column: {columnName}")
+                    print(f"You cannot modify the data in column: {columnName}")
+                    input("Enter any key to continue ")
                     return
             
             else:
-                newInfo = input("Enter the new info: ")
-
+                if columnName == "Username":
+                    newInfo = ValidateUserName (input(f"Enter the new username: "))
+                elif columnName == "Password":
+                    newInfo = ValidatePassWord(input(f"Enter the new password: "))
+                elif columnName == "First_Name":
+                    newInfo = ValidateFirstName(input(f"Enter the new first name: "))
+                elif columnName == "Last_Name":
+                    newInfo = ValidateLastName(input(f"Enter the new last name: "))
+                else:
+                    print(f"You cannot modify the data in column: {columnName}")
+                    input("Enter any key to continue ")
+                    return
 
             updateInfo(columnName,table,newInfo,uid)
             input("Enter any key to continue\n")
@@ -591,7 +606,7 @@ def logAction(dc,ad,sp):
     cursor.execute(sql,args) 
     connection.commit() 
 
-    if sus == "Yes":
+    if Crypt(sus, 5, False) == "Yes":
         
         sql = """INSERT INTO unreadsuslogs (Username, Date, Time, Description_of_activity, Additional_information)
         VALUES (?,?,?,?,?)"""
@@ -626,72 +641,90 @@ def show_log():
 
 
 def empty_table():
-    name = input("delete content of table. tablename: ")
-    cursor.execute("DELETE FROM {}".format(name))
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+    res = cursor.fetchall()
+    tables = []
+    for i in res:
+        tables.append(i[0])
+
+    name = ""
+    while True:    
+        name = input("Empty table. Tablename: ")
+        if name in tables:
+            if name != "sqlite_sequence":
+                break
+        print("Invalid input")
+
+    cursor.execute(f"DELETE FROM {name}")
     connection.commit()
-    
 
 def drop_table():
-    name = input("drop table. tablename: ")
-    cursor.execute("DROP TABLE {}".format(name))
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+    res = cursor.fetchall()
+    tables = []
+    for i in res:
+        tables.append(i[0])
+
+    name = ""
+    while True:    
+        name = input("Drop table. Tablename: ")
+        if name in tables:
+            if name != "sqlite_sequence":
+                break
+        print("Invalid input")
+
+    cursor.execute(f"DROP TABLE {name}")
     connection.commit()
     
-#FOREIGN KEY(store_id) REFERENCES stores(store_id)) (reminder on how to do foreign keys)
-
-#--------------INSERT INTO CLIENT
-# cursor.execute("INSERT INTO clients (Full_Name, Address, Email_Address, Mobile_Phone)\
-#                             VALUES  ('Bob','Afri','Afri@gmail.com','124142142' )")
-# cursor.execute("INSERT INTO clients (Full_Name, Address, Email_Address, Mobile_Phone)\
-#                             VALUES  ('Boasdb','Afasdri','Afriasdgmail.com','124142asd142' )")
-
-# cursor.execute("UPDATE purchases SET total_cost = 3.67 WHERE purchase_id = 2")
-# cursor.execute("DELETE FROM purchases WHERE purchase_id = 3")
-
-# sqlinjection="Bob' OR 'a' = 'a' --"
-
-# #injection prevented
-
-#cursor.execute("SELECT * FROM clients WHERE id=:id",{"id":fn})
-#cursor.execute("SELECT * FROM clients WHERE Full_Name='{}'".format(fn))
-
-# cursor.execute("SELECT * FROM clients WHERE Full_Name=:username",{"username":bob})
-
-#injection unprevented
-#cursor.execute("SELECT * FROM clients WHERE Full_Name='{}'".format(bob))
 
 
 def ValidateName (name):
     while not re.match('^([a-zA-Z\']{1,40})+\ +([a-zA-Z]{1,40})+$', name):
         name = input("Please enter a valid full name (Firstname and lastname with a space between them): ")
+        logAction("Invalid name input", f"Input: {name}", "No")
     return name
 
 def ValidateStreetName (streetname):
     while not re.match('^([a-zA-Z]{1,50})+$', streetname.replace(" ","")): 
         streetname = input("Please enter a valid street name: ")
+        logAction("Invalid street name input", f"Input: {streetname}", "No")
     return streetname
 
 def ValidateHouseNumber (housenumber):
     while not re.match('^([a-zA-Z0-9]{1,20})+$', housenumber):
         housenumber = input("Please enter a valid house number: ")
+        logAction("Invalid house number input", f"Input: {housenumber}", "No")
     return housenumber
 
 def ValidateZipCode (zipcode):
     while not re.match("^[0-9]{4}([a-zA-Z]{2})$", zipcode):
         zipcode = input("Please enter a valid zipcode (zipcode should be 4 numbers and 2 letters with no space): ")
+        logAction("Invalid zipcode input", f"Input: {zipcode}", "No")
     return zipcode
 
 def ValidateEmail (email):
     while not re.match('^([A-Za-z0-9._%+-]{2,40})+@([A-Za-z0-9.-]{2,20})+\.[A-Z|a-z]{2,}$', email):  
         email = input("Please enter a valid email address: ")
+        logAction("Invalid email input", f"Input: {email}", "No")
     return email
 
 def ValidatePhoneNumber (mobile):
     while not re.match('^[0-9]{8}$', mobile):  
        mobile = input("Please enter a valid phone number: +31-6-")
+       logAction("Invalid phonenumber input", f"Input: {mobile}", "No")
     return mobile
     
 def ValidateCity (city, cities):
+    strikes = 0
     while city not in cities:
+        strikes += 1
+
+        if strikes == 2:
+            print("Invalid input. Incident Logged")
+            logAction("Invalid city input", f"Input: {city}", "Yes")
+            exit()
+
+        logAction("Invalid city input", f"Input: {city}", "No")
         print ("Please choose one from the list below:")
         for city in cities:
             print("- " + city )
@@ -700,22 +733,26 @@ def ValidateCity (city, cities):
 
 def ValidateUserName (username):
     while not re.match('^([A-Za-z]{1})+([A-Za-z0-9._\'-]{4,19})$', username):  
-        username = input("Please enter a valid username (must have a length of at least 5 characters, must be no longer than 20 characters, must be started with a letter and can contain letters, numbers, (-), (_), (') and (.)): ")
+        username = input("Please enter a valid username\n- Must have a length of at least 5 characters\n- Must be no longer than 20 characters\n- Must start with a letter\n- Can contain letters, numbers, (-), (_), (') and (.))\n\nUsername:")
+        logAction("Invalid username input", f"Input: {username}", "No")
     return username
 
 def ValidatePassWord (password):
     while not re.match("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&/~#^+_=`|:;\'<>,.)(}{-])[A-Za-z\d@$!%*?&/~#^+_=`|:;\'<>,.)(}{-]{8,}$", password):  
-        password = input("Please enter a valid password (must have a combination of at least one lowercase letter, one uppercase letter, one digit and one special character): ")
+        password = input("Please enter a valid password\n- Must have a length of at least 8 characters\n- Must be no longer than 30 characters\n- Must have a combination of at least one lowercase letter, one uppercase letter, one digit and one special character\n\nPassword: ")
+        logAction("Invalid password input", f"Input: {password}", "No")
     return password 
 
 def ValidateFirstName (firstname):
     while not re.match('^([a-zA-Z\']{1,40})+$', firstname):
         firstname = input("Please enter a valid first name: ")
+        logAction("Invalid first name input", f"Input: {firstname}", "No")
     return firstname
 
 def ValidateLastName (lastname):
     while not re.match('^([a-zA-Z\']{1,40})+$', lastname):
         lastname = input("Please enter a valid last name: ")
+        logAction("Invalid last name input", f"Input: {lastname}", "No")
     return lastname
 
 
@@ -769,3 +806,26 @@ def Backup():
 
     os.remove('backup.db')
     
+
+#FOREIGN KEY(store_id) REFERENCES stores(store_id)) (reminder on how to do foreign keys)
+
+#--------------INSERT INTO CLIENT
+# cursor.execute("INSERT INTO clients (Full_Name, Address, Email_Address, Mobile_Phone)\
+#                             VALUES  ('Bob','Afri','Afri@gmail.com','124142142' )")
+# cursor.execute("INSERT INTO clients (Full_Name, Address, Email_Address, Mobile_Phone)\
+#                             VALUES  ('Boasdb','Afasdri','Afriasdgmail.com','124142asd142' )")
+
+# cursor.execute("UPDATE purchases SET total_cost = 3.67 WHERE purchase_id = 2")
+# cursor.execute("DELETE FROM purchases WHERE purchase_id = 3")
+
+# sqlinjection="Bob' OR 'a' = 'a' --"
+
+# #injection prevented
+
+#cursor.execute("SELECT * FROM clients WHERE id=:id",{"id":fn})
+#cursor.execute("SELECT * FROM clients WHERE Full_Name='{}'".format(fn))
+
+# cursor.execute("SELECT * FROM clients WHERE Full_Name=:username",{"username":bob})
+
+#injection unprevented
+#cursor.execute("SELECT * FROM clients WHERE Full_Name='{}'".format(bob))
